@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Delete Event - School Management System{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="row align-items-center">
+        <div class="col">
+            <h3 class="page-title">Delete Event</h3>
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'core:home' %}">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'events:event_list' %}">Events</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'events:event_detail' event.pk %}">{{ event.title }}</a></li>
+                <li class="breadcrumb-item active">Delete</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="alert alert-danger">
+                    <h4 class="alert-heading">Are you sure you want to delete this event?</h4>
+                    <p>This action cannot be undone. All data related to this event will be permanently removed.</p>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Title</label>
+                            <p>{{ event.title }}</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Event Type</label>
+                            <p>{{ event.get_event_type_display }}</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Start Date</label>
+                            <p>{{ event.start_date|date:"d M Y" }}</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>End Date</label>
+                            <p>{{ event.end_date|date:"d M Y" }}</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="text-end mt-4">
+                        <a href="{% url 'events:event_detail' event.pk %}" class="btn btn-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-danger">Delete Event</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

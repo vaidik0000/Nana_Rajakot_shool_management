@@ -1,0 +1,196 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Fee Payment - School Management System{% endblock %}
+
+{% block extra_css %}
+<style>
+    .razorpay-payment-button {
+        display: none;
+    }
+
+    .payment-info {
+        background-color: #f9f9f9;
+        border-radius: 5px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+
+    .payment-amount {
+        font-size: 24px;
+        font-weight: bold;
+        color: #3E4095;
+    }
+
+    .custom-pay-button {
+        background-color: #3E4095;
+        color: white;
+        padding: 12px 30px;
+        border: none;
+        border-radius: 4px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .custom-pay-button:hover {
+        background-color: #2D3082;
+    }
+
+    #payment-success-message,
+    #payment-error-message {
+        display: none;
+        margin-top: 15px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="row align-items-center">
+        <div class="col">
+            <h3 class="page-title">Fee Payment</h3>
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'core:home' %}">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'fees:fee_payment_list' %}">Fee Transactions</a></li>
+                <li class="breadcrumb-item active">Payment</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">Complete Payment</h5>
+            </div>
+            <div class="card-body">
+                <div class="payment-info text-center">
+                    <h4>Student: {{ student.first_name }} {{ student.last_name }}</h4>
+                    <p>Class: {{ student.get_class_name_display }}</p>
+                    <p>Roll Number: {{ student.roll_number }}</p>
+                    <h3 class="payment-amount">Amount: ₹{{ amount }}</h3>
+                </div>
+
+                <div class="text-center mb-4">
+                    <button id="custom-pay-button" class="custom-pay-button">
+                        <i class="fas fa-credit-card mr-2"></i> Pay Now
+                    </button>
+                </div>
+
+                <div id="payment-success-message" class="alert alert-success">
+                    <i class="fas fa-check-circle"></i> Payment processing... Please wait.
+                </div>
+
+                <div id="payment-error-message" class="alert alert-danger">
+                    <i class="fas fa-times-circle"></i> <span id="error-message-text">Payment failed. Please try
+                        again.</span>
+                </div>
+
+                <!-- Hidden form with CSRF token -->
+                <form action="{% url 'fees:payment_callback' %}" method="POST" id="razorpay-form">
+                    {% csrf_token %}
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                    <input type="hidden" name="razorpay_payment_id" id="razorpay_payment_id" value="">
+                    <input type="hidden" name="razorpay_order_id" id="razorpay_order_id" value="{{ order_id }}">
+                    <input type="hidden" name="razorpay_signature" id="razorpay_signature" value="">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        console.log("Payment page loaded");
+        console.log("Order ID: {{ order_id }}");
+        console.log("Amount: {{ amount_in_paise }}");
+
+        // Get CSRF token
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        // Setup CSRF token for AJAX requests
+        const csrftoken = getCookie('csrftoken');
+
+        // Razorpay options
+        var options = {
+            key: "{{ razorpay_key }}",
+            amount: "{{ amount_in_paise }}",
+            currency: "INR",
+            name: "School Management System",
+            description: "Fee Payment for {{ student.first_name }} {{ student.last_name }}",
+            image: "{% static 'assets/img/aavishkruti_s_logo.png' %}",
+            order_id: "{{ order_id }}",
+            handler: function (response) {
+                console.log("Payment successful");
+                console.log(response);
+
+                // Set form values
+                document.getElementById('razorpay_payment_id').value = response.razorpay_payment_id;
+                document.getElementById('razorpay_order_id').value = response.razorpay_order_id;
+                document.getElementById('razorpay_signature').value = response.razorpay_signature;
+
+                // Show processing message
+                document.getElementById('payment-success-message').style.display = 'block';
+                document.getElementById('custom-pay-button').style.display = 'none';
+
+                // Submit the form
+                document.getElementById('razorpay-form').submit();
+            },
+            prefill: {
+                name: "{{ student.first_name }} {{ student.last_name }}",
+                email: "{{ student.email }}",
+                contact: "{{ student.phone_number }}"
+            },
+            notes: {
+                student_id: "{{ student.id }}",
+                transaction_id: "{{ transaction.id }}"
+            },
+            theme: {
+                color: "#3E4095"
+            },
+            modal: {
+                ondismiss: function () {
+                    console.log("Payment checkout closed without completion");
+                }
+            }
+        };
+
+        var razorpay = new Razorpay(options);
+
+        // Handle payment errors
+        razorpay.on('payment.failed', function (response) {
+            console.error("Payment failed");
+            console.error(response.error);
+
+            document.getElementById('error-message-text').innerText =
+                "Payment failed: " + response.error.description;
+            document.getElementById('payment-error-message').style.display = 'block';
+        });
+
+        // Custom button click handler
+        document.getElementById('custom-pay-button').onclick = function (e) {
+            console.log("Pay button clicked");
+            razorpay.open();
+            e.preventDefault();
+        };
+    });
+</script>
+{% endblock %}

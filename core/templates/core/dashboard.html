@@ -1,0 +1,223 @@
+{% extends "core/base.html" %}
+{% load static %}
+{% load core_extras %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
+        <div class="btn-group">
+            <a href="{% url 'students:student_create' %}" class="btn btn-primary">
+                <i class="fas fa-user-plus"></i> Add Student
+            </a>
+            <a href="{% url 'fees:fee_payment_create' %}" class="btn btn-success">
+                <i class="fas fa-money-bill"></i> Record Payment
+            </a>
+            <a href="{% url 'events:event_create' %}" class="btn btn-info">
+                <i class="fas fa-calendar-plus"></i> Add Event
+            </a>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Total Students</h5>
+                    <h2 class="mb-0">{{ total_students }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Total Expected</h5>
+                    <h2 class="mb-0">₹{{ total_expected|floatformat:2 }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Total Collected</h5>
+                    <h2 class="mb-0">₹{{ total_collected|floatformat:2 }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-warning text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Pending Amount</h5>
+                    <h2 class="mb-0">₹{{ pending_amount|floatformat:2 }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Events Section -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Upcoming Events</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Event</th>
+                                    <th>Type</th>
+                                    <th>Date</th>
+                                    <th>Location</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for event in upcoming_events %}
+                                <tr>
+                                    <td>{{ event.title }}</td>
+                                    <td>{{ event.get_event_type_display }}</td>
+                                    <td>{{ event.start_date|date:"d M Y" }}</td>
+                                    <td>{{ event.location|default:"-" }}</td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="4" class="text-center">No upcoming events</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Ongoing Events</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Event</th>
+                                    <th>Type</th>
+                                    <th>End Date</th>
+                                    <th>Location</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for event in ongoing_events %}
+                                <tr>
+                                    <td>{{ event.title }}</td>
+                                    <td>{{ event.get_event_type_display }}</td>
+                                    <td>{{ event.end_date|date:"d M Y" }}</td>
+                                    <td>{{ event.location|default:"-" }}</td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="4" class="text-center">No ongoing events</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fee Structure Overview -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Fee Structure Overview</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Category</th>
+                                    <th>Grade</th>
+                                    <th>Amount</th>
+                                    <th>Collected</th>
+                                    <th>Pending</th>
+                                    <th>Collection %</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for structure in fee_structures %}
+                                <tr>
+                                    <td>{{ structure.category.name }}</td>
+                                    <td>{{ structure.grade.name }}</td>
+                                    <td>₹{{ structure.amount|floatformat:2 }}</td>
+                                    <td>
+                                        <div class="progress">
+                                            <div class="progress-bar bg-success" role="progressbar"
+                                                aria-valuenow="{{ structure.total_collected|default:0|percentage:structure.amount }}"
+                                                aria-valuemin="0" aria-valuemax="100">
+                                                {{ structure.total_collected|default:0|percentage:structure.amount }}%
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Payments -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Recent Payments</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Student</th>
+                                    <th>Fee Structure</th>
+                                    <th>Amount</th>
+                                    <th>Payment Date</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for payment in recent_payments %}
+                                <tr>
+                                    <td>{{ payment.student.first_name }} {{ payment.student.last_name }}</td>
+                                    <td>{{ payment.fee_structure.category.name }} - {{ payment.fee_structure.grade.name
+                                        }}</td>
+                                    <td>₹{{ payment.amount|floatformat:2 }}</td>
+                                    <td>{{ payment.payment_date|date:"d M Y" }}</td>
+                                    <td>
+                                        <span
+                                            class="badge {% if payment.status == 'paid' %}bg-success{% elif payment.status == 'pending' %}bg-warning{% else %}bg-danger{% endif %}">
+                                            {{ payment.status|title }}
+                                        </span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

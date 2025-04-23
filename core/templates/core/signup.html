@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Sign Up - School Management System{% endblock %}
+
+{% block content %}
+<div class="main-wrapper login-body">
+    <div class="login-wrapper">
+        <div class="container">
+            <div class="loginbox">
+                <div class="login-left">
+                    <img class="img-fluid" src="{% static 'assets/img/sarswati_2.jpg' %}" alt="Saraswati">
+                </div>
+                <div class="login-right">
+                    <div class="login-right-wrap">
+                        <h1>Sign Up</h1>
+                        <p class="account-subtitle">Create your account</p>
+
+                        {% if messages %}
+                        <div class="messages">
+                            {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                    aria-label="Close"></button>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+
+                        <form method="post" class="needs-validation" novalidate>
+                            {% csrf_token %}
+
+                            {% for field in form %}
+                            <div class="form-group">
+                                {{ field }}
+                                {% if field.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in field.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                                {% if field.help_text %}
+                                <small class="form-text text-muted">{{ field.help_text }}</small>
+                                {% endif %}
+                            </div>
+                            {% endfor %}
+
+                            <div class="form-group">
+                                <button class="btn btn-primary btn-block" type="submit">Sign Up</button>
+                            </div>
+                        </form>
+
+                        <!-- <div class="login-or">
+                            <span class="or-line"></span>
+                            <span class="span-or">or</span>
+                        </div>
+
+                        <div class="social-login">
+                            <span>Sign up with</span>
+                            <a href="#" class="facebook"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#" class="google"><i class="fab fa-google"></i></a>
+                        </div> -->
+
+                        <div class="text-center dont-have">
+                            Already have an account? <a href="{% url 'core:login' %}">Login</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,649 @@
+{% load static %}
+{% load core_extras %}
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+    <title>{% block title %}School Management System{% endblock %}</title>
+    <link rel="shortcut icon" href="{% static 'assets/img/small-s.png' %}">
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,500;0,600;0,700;1,400&amp;display=swap">
+    <link rel="stylesheet" href="{% static 'assets/plugins/bootstrap/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/plugins/fontawesome/css/fontawesome.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/plugins/fontawesome/css/all.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
+    <style>
+        :root {
+            --dark-bg: #121212;
+            --dark-surface: #1e1e1e;
+            --dark-surface-2: #2d2d2d;
+            --dark-text: #e0e0e0;
+            --dark-text-secondary: #b0b0b0;
+            --dark-accent: #bb86fc;
+            --dark-error: #cf6679;
+            --dark-warning: #ff9800;
+            --light-bg: #fafafa;
+            --light-surface: #ffffff;
+            --light-surface-2: #f5f5f5;
+            --light-text: #212121;
+            --light-text-secondary: #757575;
+            --light-accent: #6200ee;
+            --light-error: #b00020;
+            --light-warning: #ff9800;
+
+            --bg-color: var(--light-bg);
+            --surface-color: var(--light-surface);
+            --surface-color-2: var(--light-surface-2);
+            --text-color: var(--light-text);
+            --text-color-secondary: var(--light-text-secondary);
+            --accent-color: var(--light-accent);
+            --error-color: var(--light-error);
+            --warning-color: var(--light-warning);
+        }
+
+        [data-theme="dark"] {
+            --bg-color: var(--dark-bg);
+            --surface-color: var(--dark-surface);
+            --surface-color-2: var(--dark-surface-2);
+            --text-color: var(--dark-text);
+            --text-color-secondary: var(--dark-text-secondary);
+            --accent-color: var(--dark-accent);
+            --error-color: var(--dark-error);
+            --warning-color: var(--dark-warning);
+        }
+
+        body {
+            transition: background-color 0.3s ease;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+
+        .card {
+            background-color: var(--surface-color);
+            color: var(--text-color);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .table {
+            color: var(--text-color);
+            transition: color 0.3s ease;
+        }
+
+        /* Theme toggle switch */
+        .theme-toggle {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .theme-toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .theme-toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .theme-toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked+.theme-toggle-slider {
+            background-color: #2196F3;
+        }
+
+        input:checked+.theme-toggle-slider:before {
+            transform: translateX(26px);
+        }
+
+        /* Custom Avatar With Border */
+        .avatar-container {
+            position: relative;
+            display: inline-block;
+            border-radius: 50%;
+            padding: 2px;
+            background: linear-gradient(145deg, #6dd5ed, #2193b0);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .avatar-container:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .avatar-image {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid white;
+        }
+
+        /* Menu arrow animation */
+        .has-arrow::after {
+            border-color: var(--text-color);
+            transition: all 0.3s ease;
+        }
+
+        [data-theme="dark"] .has-arrow::after {
+            border-color: var(--dark-text);
+        }
+
+        .has-arrow[aria-expanded="true"]::after {
+            transform: rotate(-180deg);
+        }
+
+        /* Avatar Circle Styling */
+        .avatar-circle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background-color: #f0f0f0;
+            /* Default background color */
+            color: #333;
+            /* Default text color */
+            width: 40px;
+            /* Adjust size as needed */
+            height: 40px;
+            /* Adjust size as needed */
+            font-weight: bold;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .avatar-circle-sm {
+            width: 30px;
+            height: 30px;
+        }
+
+        .avatar-circle-md {
+            width: 50px;
+            height: 50px;
+        }
+
+        /* Online Status Indicator */
+        .online-status {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 10px;
+            height: 10px;
+            background-color: #4caf50;
+            /* Green for online */
+            border-radius: 50%;
+            border: 2px solid #fff;
+            /* White border */
+        }
+
+        /* Dropdown Menu Styling */
+        .dropdown-menu {
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+            transition: all 0.3s ease;
+        }
+
+        .dropdown-item {
+            padding: 8px 16px;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f0f0f0;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .nav-item {
+                margin-bottom: 10px;
+            }
+        }
+
+        /* Logout button styling */
+        .logout-btn {
+            padding: 6px 12px;
+            margin-right: 10px;
+            margin-top: 7px;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: all 0.3s;
+            background-color: #dc3545;
+            border-color: #dc3545;
+        }
+
+        .logout-btn:hover {
+            background-color: #c82333;
+            border-color: #bd2130;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Responsive Logout Button */
+        @media (max-width: 576px) {
+            .logout-btn i {
+                margin-right: 0;
+            }
+
+            .logout-text {
+                display: none;
+            }
+
+            .logout-btn {
+                padding: 6px 10px;
+                margin-right: 5px;
+            }
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+    <div class="main-wrapper">
+        <div class="header">
+            <div class="header-left">
+                <a href="{% url 'core:home' %}" class="logo">
+                    <img src="{% static 'assets/img/school_new.png' %}" alt="Logo" width="40" height="40">
+                </a>
+                <a href="{% url 'core:home' %}" class="logo logo-small">
+                    <img src="{% static 'assets/img/small-s.png' %}" alt="Logo" width="35" height="35">
+                </a>
+            </div>
+            <a href="javascript:void(0);" id="toggle_btn">
+                <i class="fas fa-align-left"></i>
+            </a>
+            <!-- <div class="top-nav-search">
+                <form>
+                    <input type="text" class="form-control" placeholder="Search here">
+                    <button class="btn" type="submit"><i class="fas fa-search"></i></button>
+                </form>
+            </div> -->
+            <a class="mobile_btn" id="mobile_btn">
+                <i class="fas fa-bars"></i>
+            </a>
+            <ul class="nav user-menu">
+                {% if user.is_authenticated %}
+                <li class="nav-item">
+                    <form method="post" action="{% url 'core:logout' %}" style="display: inline-block; margin: 0;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger logout-btn" title="Logout">
+                            <i class="fas fa-sign-out-alt"></i> <span class="logout-text">Logout</span>
+                        </button>
+                    </form>
+                </li>
+                {% endif %}
+                <li class="nav-item dropdown has-arrow">
+
+                    <div class="dropdown-menu">
+                        <div class="user-header">
+                            <div class="avatar avatar-sm">
+                                {% if user.is_authenticated %}
+                                <div class="avatar-circle avatar-circle-md {{ user.username|avatar_color_class }}">
+                                    {{ user.username|make_list|first|upper }}
+                                    <span class="online-status"></span>
+                                </div>
+                                {% else %}
+                                <img src="{% static 'assets/img/profiles/avatar-01.jpg' %}" alt="User Image"
+                                    class="avatar-img rounded-circle">
+                                {% endif %}
+                            </div>
+                            <div class="user-text">
+                                <h6>{% if user.is_authenticated %}{{ user.username }}{% else %}Guest{% endif %}</h6>
+                                <p class="text-muted mb-0">
+                                    {% if user.is_authenticated %}
+                                    {% if user.is_superuser %}
+                                    <span class="badge bg-success">Administrator</span>
+                                    {% elif user.is_staff %}
+                                    <span class="badge bg-primary">Staff</span>
+                                    {% else %}
+                                    <span class="badge bg-info">User</span>
+                                    {% endif %}
+                                    {% else %}
+                                    <span class="badge bg-secondary">Guest</span>
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+                        {% if user.is_authenticated %}
+                        <a class="dropdown-item user-dropdown-link" href="{% url 'admin:index' %}">
+                            <i class="fas fa-cog me-2"></i>Admin Panel
+                        </a>
+                        <a class="dropdown-item user-dropdown-link" href="{% url 'core:home' %}">
+                            <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <form method="post" action="{% url 'core:logout' %}" style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="dropdown-item user-dropdown-link">
+                                <i class="fas fa-sign-out-alt me-2"></i>Logout
+                            </button>
+                        </form>
+                        {% else %}
+                        <a class="dropdown-item user-dropdown-link" href="{% url 'core:login' %}">
+                            <i class="fas fa-sign-in-alt me-2"></i>Login
+                        </a>
+                        {% endif %}
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-inner slimscroll">
+                <div id="sidebar-menu" class="sidebar-menu">
+                    <ul>
+                        <li class="menu-title">
+                            <span>Main Menu</span>
+                        </li>
+                        <li class="submenu {% if request.resolver_match.url_name == 'home' %}active{% endif %}">
+                            <a href="{% url 'core:home' %}" id="dashboardLink" onclick="goToDashboard(event)"><i
+                                    class="fas fa-user-graduate"></i>
+                                <span>Dashboard</span></a>
+                        </li>
+                        <li class="submenu">
+                            <a href="#"><i class="fas fa-user-graduate"></i> <span>Students</span> <span
+                                    class="menu-arrow"></span></a>
+                            <ul>
+                                <li><a href="{% url 'students:student_list' %}">Student List</a></li>
+                                {% if request.user_type != 'student' and request.user_type != 'teacher' %}
+                                <li><a href="{% url 'students:student_create' %}">Add Student</a></li>
+                                {% endif %}
+                            </ul>
+                        </li>
+                        {% if request.user_type != 'student' %}
+                        <li class="submenu">
+                            <a href="#"><i class="fas fa-chalkboard-teacher"></i> <span>Teachers</span> <span
+                                    class="menu-arrow"></span></a>
+                            <ul>
+                                <li><a href="{% url 'school_teachers:teacher_list' %}">Teacher List</a></li>
+                                {% if request.user.is_staff or request.user.is_superuser %}
+                                <li><a href="{% url 'school_teachers:teacher_create' %}">Add Teacher</a></li>
+                                {% endif %}
+                            </ul>
+                        </li>
+                        {% endif %}
+                        <li class="submenu">
+                            <a href="#"><i class="fas fa-book-reader"></i> <span>Subjects</span> <span
+                                    class="menu-arrow"></span></a>
+                            <ul>
+                                <li><a href="{% url 'subjects:subject_list' %}">Subject List</a></li>
+                                {% if request.user_type != 'student' and request.user_type != 'teacher' %}
+                                <li><a href="{% url 'subjects:subject_create' %}">Add Subject</a></li>
+                                {% endif %}
+                                <li><a href="{% url 'subjects:student_marks' %}">Student Marks</a></li>
+                                {% if request.user_type != 'student' %}
+                                <li><a href="{% url 'subjects:add_student_mark' %}">Add Student Mark</a></li>
+                                {% endif %}
+                            </ul>
+                        </li>
+                        {% comment %} <li class="submenu">
+                            <a href="#"><i class="fas fa-book-reader"></i> <span>Fees</span> <span
+                                    class="menu-arrow"></span></a>
+                            <ul>
+                                <!-- add please razorpay in this section  -->
+                                <li><a href="{% url 'fees:fee_payment_list' %}">Fee Transactions</a></li>
+                                {% if request.user_type != 'teacher' %}
+                                <li><a href="{% url 'fees:initiate_payment' %}">Pay Fees</a></li>
+                                {% endif %}
+                            </ul>
+                        </li> {% endcomment %}
+
+                        <li class="menu-title">
+                            <span>Management</span>
+                        </li>
+                        <li class="submenu">
+                            <a href="#"><i class="fas fa-calendar-day"></i> <span>Events</span> <span
+                                    class="menu-arrow"></span></a>
+                            <ul>
+                                {% if request.resolver_match.url_name == 'event_list' %}
+                                <li><a href="{% url 'events:event_list' %}" class="active">Event List</a></li>
+                                {% else %}
+                                <li><a href="{% url 'events:event_list' %}">Event List</a></li>
+                                {% endif %}
+
+                                {% if request.user_type == 'teacher' or request.user_type == 'admin' or request.user.is_staff or request.user.is_superuser %}
+                                    {% if request.resolver_match.url_name == 'event_create' %}
+                                    <li><a href="{% url 'events:event_create' %}" class="active">Add Event</a></li>
+                                    {% else %}
+                                    <li><a href="{% url 'events:event_create' %}">Add Event</a></li>
+                                    {% endif %}
+                                {% endif %}
+                            </ul>
+                        </li>
+                        <li class="submenu">
+                            <a href="#"><i class="fas fa-table"></i> <span>Time Table</span> <span
+                                    class="menu-arrow"></span></a>
+                            <ul>
+                                {% if request.user_type != 'student' %}
+                                <li><a href="{% url 'timetable:timetable_list' %}">All Timetables</a></li>
+                                {% endif %}
+                                <li><a href="{% url 'timetable:class_timetable' %}">Class Timetable</a></li>
+                                {% if request.user_type != 'student' %}
+                                <li><a href="{% url 'timetable:teacher_timetable' %}">Teacher Timetable</a></li>
+                                {% endif %}
+                            </ul>
+                        </li>
+                        <li class="submenu">
+                            <a href="#"><i class="fas fa-book"></i> <span>Library</span> <span
+                                    class="menu-arrow"></span></a>
+                            <ul>
+                                <li>
+                                    <a href="{% url 'library:book_list' %}"
+                                        class="{% if request.resolver_match.url_name == 'book_list' %}active{% endif %}">
+                                        Book List
+                                    </a>
+                                </li>
+                                {% if request.user_type == 'teacher' or request.user_type == 'admin' or request.user.is_staff or request.user.is_superuser %}
+                                <li>
+                                    <a href="{% url 'library:book_create' %}"
+                                        class="{% if request.resolver_match.url_name == 'book_create' %}active{% endif %}">
+                                        Add Book
+                                    </a>
+                                </li>
+                                {% endif %}
+                                <li>
+                                    <a href="{% url 'library:issue_list' %}"
+                                        class="{% if request.resolver_match.url_name == 'issue_list' %}active{% endif %}">
+                                        Issue History
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="submenu">
+                            <a href="#"><i class="fas fa-clipboard-check"></i> <span>Attendance</span> <span
+                                    class="menu-arrow"></span></a>
+                            <ul>
+                                <!-- Student Attendance -->
+                                <li>
+                                    <a href="{% url 'attendance:list' %}"
+                                        class="{% if request.resolver_match.url_name == 'list' %}active{% endif %}">
+                                        Student Attendance List
+                                    </a>
+                                </li>
+
+                                {% if request.user_type != 'student' %}
+                                <li>
+                                    <a href="{% url 'attendance:create' %}"
+                                        class="{% if request.resolver_match.url_name == 'create' %}active{% endif %}">
+                                        Record Student Attendance
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'attendance:bulk_create' %}"
+                                        class="{% if request.resolver_match.url_name == 'bulk_create' %}active{% endif %}">
+                                        Bulk Student Attendance
+                                    </a>
+                                </li>
+                                {% endif %}
+
+                                <!-- Teacher Attendance -->
+                                {% if request.user_type != 'student' %}
+                                <li>
+                                    <a href="{% url 'attendance:teacher_attendance_list' %}"
+                                        class="{% if request.resolver_match.url_name == 'teacher_attendance_list' %}active{% endif %}">
+                                        Teacher Attendance List
+                                    </a>
+                                </li>
+                                {% endif %}
+                                {% if request.user.is_staff or request.user.is_superuser %}
+                                <li>
+                                    <a href="{% url 'attendance:teacher_attendance_create' %}"
+                                        class="{% if request.resolver_match.url_name == 'teacher_attendance_create' %}active{% endif %}">
+                                        Record Teacher Attendance
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'attendance:teacher_attendance_bulk_create' %}"
+                                        class="{% if request.resolver_match.url_name == 'teacher_attendance_bulk_create' %}active{% endif %}">
+                                        Bulk Teacher Attendance
+                                    </a>
+                                </li>
+                                {% endif %}
+
+                                <!-- Reports -->
+                                <!-- <li>
+                                    <a href="{% url 'attendance:attendance_report' %}"
+                                        class="{% if request.resolver_match.url_name == 'attendance_report' %}active{% endif %}">
+                                        Student Reports
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'attendance:teacher_attendance_report' %}"
+                                        class="{% if request.resolver_match.url_name == 'teacher_attendance_report' %}active{% endif %}">
+                                        Teacher Reports
+                                    </a>
+                                </li> -->
+                            </ul>
+                        </li>
+                        {% if request.user.is_staff or request.user.is_superuser %}
+                        <li class="submenu">
+                            <a href="#"><i class="fas fa-file-alt"></i> <span>Documents</span> <span
+                                    class="menu-arrow"></span></a>
+                            <ul>
+                                <li>
+                                    <a href="{% url 'documents:document_matrix' %}"
+                                        class="{% if request.resolver_match.url_name == 'document_matrix' %}active{% endif %}">
+                                        Document Matrix
+                                    </a>
+                                </li>
+                                <!-- <li>
+                                    <a href="{% url 'documents:search_documents' %}"
+                                        class="{% if request.resolver_match.url_name == 'search_documents' %}active{% endif %}">
+                                        Search Documents
+                                    </a>
+                                </li> -->
+                                <li>
+                                    <a href="{% url 'documents:document_type_list' %}"
+                                        class="{% if request.resolver_match.url_name == 'document_type_list' %}active{% endif %}">
+                                        Manage Document Types
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        {% endif %}
+                        <li>
+                            <!-- documents -->
+                        </li>
+
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="page-wrapper">
+            <div class="content container-fluid">
+                {% if messages %}
+                <div class="messages">
+                    {% for message in messages %}
+                    <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %} alert-dismissible fade show"
+                        role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                {% block content %}
+                <!-- Debug Info (Only visible to staff) -->
+                {% if user.is_staff %}
+                <div class="container-fluid mb-4">
+                    <div class="card bg-light">
+                        <div class="card-header">
+                            <h6 class="mb-0">Debug Information</h6>
+                        </div>
+                        <div class="card-body">
+                            <p>User: {{ user.username }} | Type: {{ request.user_type }}</p>
+                            <p>is_student check: {% if request.user_type != 'student' %}Not a student{% else %}Is a
+                                student{% endif %}</p>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="container-fluid">
+                    <!-- Rest of the template remains the same -->
+                </div>
+                {% endblock %}
+            </div>
+        </div>
+    </div>
+
+    <script src="{% static 'assets/js/jquery-3.6.0.min.js' %}"></script>
+    <script src="{% static 'assets/js/popper.min.js' %}"></script>
+    <script src="{% static 'assets/plugins/bootstrap/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'assets/plugins/slimscroll/jquery.slimscroll.min.js' %}"></script>
+    <script src="{% static 'assets/js/script.js' %}"></script>
+    {% block extra_js %}
+    {% endblock %}
+    <script>
+        // Theme toggle functionality
+        document.addEventListener('DOMContentLoaded', function () {
+            const themeToggle = document.getElementById('theme-toggle');
+            const currentTheme = localStorage.getItem('theme') || 'light';
+
+            // Set initial theme
+            document.documentElement.setAttribute('data-theme', currentTheme);
+            if (currentTheme === 'dark') {
+                themeToggle.checked = true;
+            }
+
+            // Theme toggle event listener
+            themeToggle.addEventListener('change', function () {
+                if (this.checked) {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                    localStorage.setItem('theme', 'light');
+                }
+            });
+        });
+
+        function goToDashboard(event) {
+            event.preventDefault();
+            window.location.href = "{% url 'core:home' %}";
+        }
+    </script>
+</body>
+
+</html>

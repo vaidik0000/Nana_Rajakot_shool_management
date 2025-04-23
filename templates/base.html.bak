@@ -1,0 +1,1466 @@
+{% load static %}
+{% load core_extras %}
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+    <title>{% block title %}School Management System{% endblock %}</title>
+    <link rel="shortcut icon" href="{% static 'assets/img/aavishkruti_s_logo.png' %}">
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,500;0,600;0,700;1,400&amp;display=swap">
+    <link rel="stylesheet" href="{% static 'assets/plugins/bootstrap/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/plugins/fontawesome/css/fontawesome.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/plugins/fontawesome/css/all.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
+    <style>
+        :root {
+            --dark-bg: #121212;
+            --dark-surface: #1e1e1e;
+            --dark-surface-2: #2d2d2d;
+            --dark-text: #e0e0e0;
+            --dark-text-secondary: #b0b0b0;
+            --dark-accent: #bb86fc;
+            --dark-error: #cf6679;
+            --dark-warning: #ff9800;
+            --light-bg: #fafafa;
+            --light-surface: #ffffff;
+            --light-surface-2: #f5f5f5;
+            --light-text: #212121;
+            --light-text-secondary: #757575;
+            --light-accent: #6200ee;
+            --light-error: #b00020;
+            --light-warning: #ff9800;
+
+            --bg-color: var(--light-bg);
+            --surface-color: var(--light-surface);
+            --surface-color-2: var(--light-surface-2);
+            --text-color: var(--light-text);
+            --text-color-secondary: var(--light-text-secondary);
+            --accent-color: var(--light-accent);
+            --error-color: var(--light-error);
+            --warning-color: var(--light-warning);
+        }
+
+        [data-theme="dark"] {
+            --bg-color: var(--dark-bg);
+            --surface-color: var(--dark-surface);
+            --surface-color-2: var(--dark-surface-2);
+            --text-color: var(--dark-text);
+            --text-color-secondary: var(--dark-text-secondary);
+            --accent-color: var(--dark-accent);
+            --error-color: var(--dark-error);
+            --warning-color: var(--dark-warning);
+        }
+
+        body {
+            transition: background-color 0.3s ease;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+
+        .card {
+            background-color: var(--surface-color);
+            color: var(--text-color);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .table {
+            color: var(--text-color);
+            transition: color 0.3s ease;
+        }
+
+        /* Theme toggle switch */
+        .theme-toggle {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .theme-toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .theme-toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .theme-toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked+.theme-toggle-slider {
+            background-color: #2196F3;
+        }
+
+        input:checked+.theme-toggle-slider:before {
+            transform: translateX(26px);
+        }
+
+        /* Custom Avatar With Border */
+        .avatar-container {
+            position: relative;
+            display: inline-block;
+            border-radius: 50%;
+            padding: 2px;
+            background: linear-gradient(145deg, #6dd5ed, #2193b0);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .avatar-container:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .avatar-image {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid white;
+        }
+
+        /* Menu arrow animation */
+        .has-arrow::after {
+            border-color: var(--text-color);
+            transition: all 0.3s ease;
+        }
+
+        [data-theme="dark"] .has-arrow::after {
+            border-color: var(--dark-text);
+        }
+
+        .has-arrow[aria-expanded="true"]::after {
+            transform: rotate(-180deg);
+        }
+
+        /* Avatar Circle Styling */
+        .avatar-circle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background-color: #f0f0f0;
+            /* Default background color */
+            color: #333;
+            /* Default text color */
+            width: 40px;
+            /* Adjust size as needed */
+            height: 40px;
+            /* Adjust size as needed */
+            font-weight: bold;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .avatar-circle-sm {
+            width: 30px;
+            height: 30px;
+        }
+
+        .avatar-circle-md {
+            width: 50px;
+            height: 50px;
+        }
+
+        /* Online Status Indicator */
+        .online-status {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 10px;
+            height: 10px;
+            background-color: #4caf50;
+            /* Green for online */
+            border-radius: 50%;
+            border: 2px solid #fff;
+            /* White border */
+        }
+
+        /* Dropdown Menu Styling */
+        .dropdown-menu {
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+            transition: all 0.3s ease;
+        }
+
+        .dropdown-item {
+            padding: 8px 16px;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f0f0f0;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .nav-item {
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+    <div class="main-wrapper">
+        <div class="header">
+            <div class="header-left">
+                <a href="{% url 'core:home' %}" class="logo">
+                    <img src="{% static 'assets/img/aavishkruti-logo.svg' %}" alt="Logo" width="50" height="50">
+                </a>
+                <a href="{% url 'core:home' %}" class="logo logo-small">
+                    <img src="{% static 'assets/img/aavishkruti_s_logo.png' %}" alt="Logo" width="40" height="40">
+                </a>
+            </div>
+            <a href="javascript:void(0);" id="toggle_btn">
+                <i class="fas fa-align-left"></i>
+            </a>
+            <div class="top-nav-search">
+                <form>
+                    <input type="text" class="form-control" placeholder="Search here">
+                    <button class="btn" type="submit"><i class="fas fa-search"></i></button>
+                </form>
+            </div>
+            <a class="mobile_btn" id="mobile_btn">
+                <i class="fas fa-bars"></i>
+            </a>
+            <ul class="nav user-menu">
+                <li class="nav-item">
+                    <div class="theme-toggle-wrapper">
+                        <i class="fas fa-sun theme-icon" id="light-icon"></i>
+                        <label class="theme-toggle">
+                            <input type="checkbox" id="theme-toggle-input">
+                            <span class="theme-toggle-slider"></span>
+                        </label>
+                        <i class="fas fa-moon theme-icon" id="dark-icon"></i>
+                    </div>
+                </li>
+                <li class="nav-item dropdown has-arrow">
+                    <a href="#" class="dropdown-toggle nav-link" data-bs-toggle="dropdown">
+                        <span class="user-img">
+                            {% if user.is_authenticated %}
+                            <div class="avatar-circle avatar-circle-sm {{ user.username|avatar_color_class }}">
+                                {{ user.username|make_list|first|upper }}
+                                <span class="online-status"></span>
+                            </div>
+                            {% else %}
+                            <img class="rounded-circle" src="{% static 'assets/img/profiles/avatar-01.jpg' %}"
+                                width="31" alt="User">
+                            {% endif %}
+                        </span>
+                    </a>
+                    <div class="dropdown-menu">
+                        <div class="user-header">
+                            <div class="avatar avatar-sm">
+                                {% if user.is_authenticated %}
+                                <div class="avatar-circle avatar-circle-md {{ user.username|avatar_color_class }}">
+                                    {{ user.username|make_list|first|upper }}
+                                    <span class="online-status"></span>
+                                </div>
+                                {% else %}
+                                <img src="{% static 'assets/img/profiles/avatar-01.jpg' %}" alt="User Image"
+                                    class="avatar-img rounded-circle">
+                                {% endif %}
+                            </div>
+                            <div class="user-text">
+                                <h6>{% if user.is_authenticated %}{{ user.username }}{% else %}Guest{% endif %}</h6>
+                                <p class="text-muted mb-0">
+                                    {% if user.is_authenticated %}
+                                    {% if user.is_superuser %}
+                                    <span class="badge bg-success">Administrator</span>
+                                    {% elif user.is_staff %}
+                                    <span class="badge bg-primary">Staff</span>
+                                    {% else %}
+                                    <span class="badge bg-info">User</span>
+                                    {% endif %}
+                                    {% else %}
+                                    <span class="badge bg-secondary">Guest</span>
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+                        {% if user.is_authenticated %}
+                        <a class="dropdown-item user-dropdown-link" href="{% url 'admin:index' %}">
+                            <i class="fas fa-cog me-2"></i>Admin Panel
+                        </a>
+                        <a class="dropdown-item user-dropdown-link" href="{% url 'core:home' %}">
+                            <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <form method="post" action="{% url 'core:logout' %}" style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="dropdown-item user-dropdown-link">
+                                <i class="fas fa-sign-out-alt me-2"></i>Logout
+                            </button>
+                        </form>
+                        {% else %}
+                        <a class="dropdown-item user-dropdown-link" href="{% url 'core:login' %}">
+                            <i class="fas fa-sign-in-alt me-2"></i>Login
+                        </a>
+                        {% endif %}
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-inner slimscroll">
+                <div id="sidebar-menu" class="sidebar-menu">
+                    <ul>
+                        <li class="menu-title">
+                            <span>Main Menu</span>
+                        </li>
+                        <li class="submenu {% if request.resolver_match.url_name == 'home' %}active{% endif %}">
+                            <a href="{% url 'core:home' %}"><i class="fas fa-user-graduate"></i>
+                                <span>Dashboard</span></a>
+                        </li>
+                        <li class="submenu">
+                            <a href="#"><i class="fas fa-user-graduate"></i> <span>Students</span> <span
+                                    class="menu-arrow"></span></a>
+                            <ul>
+                                <li><a href="{% url 'students:student_list' %}">Student List</a></li>
+                                <li><a href="{% url 'students:student_create' %}">Add Student</a></li>
+
+                            </ul>
+                        </li>
+                        <li class="submenu">
+                            <a href="#"><i class="fas fa-chalkboard-teacher"></i> <span>Teachers</span> <span
+                                    class="menu-arrow"></span></a>
+                            <ul>
+                                <!-- Only show teacher section to teachers and admin -->
+                                {% if request.user_type != 'student' %}
+                                <li><a href="{% url 'school_teachers:teacher_list' %}">Teacher List</a></li>
+                                {% if request.user.is_staff or request.user.is_superuser %}
+                                <li><a href="{% url 'school_teachers:teacher_create' %}">Add Teacher</a></li>
+                                {% endif %}
+                                {% endif %}
+                            </ul>
+                        </li>
+                        <li class="submenu">
+                            <a href="#"><i class="fas fa-book-reader"></i> <span>Subjects</span> <span
+                                    class="menu-arrow"></span></a>
+                            <ul>
+                                <li><a href="{% url 'subjects:subject_list' %}">Subject List</a></li>
+                                {% if request.user_type != 'student' %}
+                                <li><a href="{% url 'subjects:subject_create' %}">Add Subject</a></li>
+                                {% endif %}
+                                <li><a href="{% url 'subjects:student_marks' %}">Student Marks</a></li>
+                                {% if request.user_type != 'student' %}
+                                <li><a href="{% url 'subjects:add_student_mark' %}">Add Student Mark</a></li>
+                                {% endif %}
+                            </ul>
+                        </li>
+                        <li class="menu-title">
+                            <span>Management</span>
+                        </li>
+                        <li class="submenu">
+                            <a href="#"><i class="fas fa-file-invoice-dollar"></i> <span>Fees</span> <span
+                                    class="menu-arrow"></span></a>
+                            <ul>
+                                <li><a href="{% url 'fees:fee_payment_list' %}" {% if
+                                        request.resolver_match.url_name=='fee_payment_list' %}class="active" {% endif
+                                        %}>Fee Payments</a></li>
+                                <li><a href="{% url 'fees:fee_payment_create' %}" {% if
+                                        request.resolver_match.url_name=='fee_payment_create' %}class="active" {% endif
+                                        %}>Record Payment</a></li>
+                                <li><a href="{% url 'fees:fee_structure_list' %}" {% if
+                                        request.resolver_match.url_name=='fee_structure_list' %}class="active" {% endif
+                                        %}>Fee Structures</a></li>
+                                <li><a href="{% url 'fees:fee_category_list' %}" {% if
+                                        request.resolver_match.url_name=='fee_category_list' %}class="active" {% endif
+                                        %}>Fee Categories</a></li>
+                                {% if request.user_type == 'student' %}
+                                <li class="submenu">
+                                    <a href="#"><span>Pay Fees</span> <span class="menu-arrow"></span></a>
+                                    <ul>
+                                        <li><a href="{% url 'fees:fee_payment_list' %}?status=pending" {% if
+                                                request.resolver_match.url_name=='fee_payment_list' and
+                                                request.GET.status=='pending' %}class="active" {% endif %}><i
+                                                    class="fas fa-credit-card"></i> Pay with Razorpay</a></li>
+                                        <li><a href="{% url 'fees:fee_payment_list' %}?status=paid" {% if
+                                                request.resolver_match.url_name=='fee_payment_list' and
+                                                request.GET.status=='paid' %}class="active" {% endif %}><i
+                                                    class="fas fa-history"></i> Payment History</a></li>
+                                    </ul>
+                                </li>
+                                {% endif %}
+                            </ul>
+                        </li>
+                        <li class="submenu">
+                            <a href="#"><i class="fas fa-calendar-day"></i> <span>Events</span> <span
+                                    class="menu-arrow"></span></a>
+                            <ul>
+                                {% if request.resolver_match.url_name == 'event_list' %}
+                                <li><a href="{% url 'events:event_list' %}" class="active">Event List</a></li>
+                                {% else %}
+                                <li><a href="{% url 'events:event_list' %}">Event List</a></li>
+                                {% endif %}
+
+                                {% if request.resolver_match.url_name == 'event_create' %}
+                                <li><a href="{% url 'events:event_create' %}" class="active">Add Event</a></li>
+                                {% else %}
+                                <li><a href="{% url 'events:event_create' %}">Add Event</a></li>
+                                {% endif %}
+                            </ul>
+                        </li>
+                        <li class="submenu">
+                            <a href="#"><i class="fas fa-table"></i> <span>Time Table</span> <span
+                                    class="menu-arrow"></span></a>
+                            <ul>
+                                <li><a href="{% url 'timetable:timetable_list' %}">All Timetables</a></li>
+                                <li><a href="{% url 'timetable:class_timetable' %}">Class Timetable</a></li>
+                                <li><a href="{% url 'timetable:teacher_timetable' %}">Teacher Timetable</a></li>
+                            </ul>
+                        </li>
+                        <li class="submenu">
+                            <a href="#"><i class="fas fa-book"></i> <span>Library</span> <span
+                                    class="menu-arrow"></span></a>
+                            <ul>
+                                <li>
+                                    <a href="{% url 'library:book_list' %}"
+                                        class="{% if request.resolver_match.url_name == 'book_list' %}active{% endif %}">
+                                        Book List
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'library:book_create' %}"
+                                        class="{% if request.resolver_match.url_name == 'book_create' %}active{% endif %}">
+                                        Add Book
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'library:issue_list' %}"
+                                        class="{% if request.resolver_match.url_name == 'issue_list' %}active{% endif %}">
+                                        Issue History
+                                    </a>
+                                </li>
+
+                            </ul>
+                        </li>
+                        <li class="submenu">
+                            <a href="#"><i class="fas fa-clipboard-check"></i> <span>Attendance</span> <span
+                                    class="menu-arrow"></span></a>
+                            <ul>
+                                <li>
+                                    <a href="{% url 'attendance:list' %}"
+                                        class="{% if request.resolver_match.url_name == 'list' %}active{% endif %}">
+                                        All Attendance Records
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'attendance:create' %}"
+                                        class="{% if request.resolver_match.url_name == 'create' %}active{% endif %}">
+                                        Record Attendance
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'attendance:bulk_create' %}"
+                                        class="{% if request.resolver_match.url_name == 'bulk_create' %}active{% endif %}">
+                                        Bulk Attendance
+                                    </a>
+                                </li>
+                                <!-- <li>
+                                    <a href="{% url 'attendance:report_list' %}"
+                                        class="{% if request.resolver_match.url_name == 'report_list' %}active{% endif %}">
+                                        Attendance Reports
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'attendance:take' %}"
+                                        class="{% if request.resolver_match.url_name == 'take' %}active{% endif %}">
+                                        Take Attendance
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'attendance:student' %}"
+                                        class="{% if request.resolver_match.url_name == 'student' %}active{% endif %}">
+                                        Student Attendance
+                                    </a>
+                                </li> -->
+                            </ul>
+                        </li>
+
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="page-wrapper">
+            <div class="content container-fluid">
+                {% if messages %}
+                <div class="messages">
+                    {% for message in messages %}
+                    <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %} alert-dismissible fade show"
+                        role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                {% block content %}
+                {% endblock %}
+            </div>
+        </div>
+    </div>
+
+    <script src="{% static 'assets/js/jquery-3.6.0.min.js' %}"></script>
+    <script src="{% static 'assets/js/popper.min.js' %}"></script>
+    <script src="{% static 'assets/plugins/bootstrap/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'assets/plugins/slimscroll/jquery.slimscroll.min.js' %}"></script>
+    <script src="{% static 'assets/js/script.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+    <script>
+        // Dark/Light Mode Toggle
+        document.addEventListener('DOMContentLoaded', function () {
+            const themeToggle = document.getElementById('theme-toggle-input');
+            const htmlElement = document.documentElement;
+
+            // Check if there's a saved theme preference
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                htmlElement.setAttribute('data-theme', savedTheme);
+                themeToggle.checked = savedTheme === 'dark';
+            }
+
+            // Toggle theme when switch is clicked
+            themeToggle.addEventListener('change', function () {
+                if (this.checked) {
+                    htmlElement.setAttribute('data-theme', 'dark');
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    htmlElement.setAttribute('data-theme', 'light');
+                    localStorage.setItem('theme', 'light');
+                }
+            });
+        });
+    </script>
+
+    <!-- Chatbot Widget -->
+    <div id="chatbot-widget">
+        <div id="chatbot-toggle">
+            <i class="fas fa-comment-dots"></i>
+        </div>
+        <div id="chatbot-container" class="hidden">
+            <div id="chatbot-header">
+                <h5>School Assistant</h5>
+                <button id="chatbot-close"><i class="fas fa-times"></i></button>
+            </div>
+            <div id="chatbot-messages">
+                <div class="bot-message">
+                    <div class="message-content">Hello! How can I help you with school information today?</div>
+                </div>
+            </div>
+            <div id="chatbot-input-container">
+                <input type="text" id="chatbot-input" placeholder="Type your question...">
+                <button id="chatbot-send"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <div id="chatbot-quick-replies" class="hidden">
+        <button class="quick-reply-btn">Option 1</button>
+        <button class="quick-reply-btn">Option 2</button>
+        <button class="quick-reply-btn">Option 3</button>
+    </div>
+
+    <style>
+        /* Chatbot Styles */
+        #chatbot-widget {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        #chatbot-toggle {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-color), #4a00e0);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            transform-origin: center;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            }
+
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+            }
+
+            100% {
+                transform: scale(1);
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            }
+        }
+
+        #chatbot-toggle i {
+            color: white;
+            font-size: 24px;
+            transition: transform 0.3s ease;
+        }
+
+        #chatbot-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        #chatbot-toggle:hover i {
+            transform: rotate(15deg);
+        }
+
+        #chatbot-container {
+            position: absolute;
+            bottom: 80px;
+            right: 0;
+            width: 380px;
+            height: 500px;
+            border-radius: 16px;
+            background-color: var(--surface-color);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+        }
+
+        #chatbot-container.hidden {
+            opacity: 0;
+            transform: scale(0.9) translateY(20px);
+            pointer-events: none;
+        }
+
+        #chatbot-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            background: linear-gradient(135deg, var(--accent-color), #4a00e0);
+            color: white;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        #chatbot-header h5 {
+            margin: 0;
+            font-weight: 600;
+            font-size: 1.1rem;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+        }
+
+        #chatbot-header h5:before {
+            content: '';
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background-color: #4caf50;
+            border-radius: 50%;
+            margin-right: 8px;
+            box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
+        }
+
+        #chatbot-close {
+            background: transparent;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        #chatbot-close:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            transform: rotate(90deg);
+        }
+
+        #chatbot-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            background-color: var(--surface-color);
+            background-image: radial-gradient(rgba(0, 0, 0, 0.02) 2px, transparent 2px);
+            background-size: 30px 30px;
+            scroll-behavior: smooth;
+        }
+
+        .bot-message,
+        .user-message {
+            max-width: 85%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            margin-bottom: 4px;
+            position: relative;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            line-height: 1.5;
+            font-size: 0.95rem;
+        }
+
+        .bot-message {
+            align-self: flex-start;
+            background-color: var(--surface-color-2);
+            color: var(--text-color);
+            border-bottom-left-radius: 4px;
+            animation: slideInLeft 0.4s ease forwards;
+        }
+
+        @keyframes slideInLeft {
+            from {
+                transform: translateX(-20px) translateY(10px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0) translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .bot-message .message-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            margin-top: 8px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .bot-message:hover .message-actions {
+            opacity: 1;
+        }
+
+        .message-action-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 12px;
+            color: var(--text-color-secondary);
+            padding: 4px 8px;
+            border-radius: 12px;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .message-action-btn:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .message-action-btn.helpful {
+            color: #4caf50;
+        }
+
+        .message-action-btn.helpful:hover {
+            background-color: rgba(76, 175, 80, 0.1);
+        }
+
+        .message-action-btn.not-helpful {
+            color: #f44336;
+        }
+
+        .message-action-btn.not-helpful:hover {
+            background-color: rgba(244, 67, 54, 0.1);
+        }
+
+        .user-message {
+            align-self: flex-end;
+            background: linear-gradient(135deg, var(--accent-color), #4a00e0);
+            color: white;
+            border-bottom-right-radius: 4px;
+            animation: slideInRight 0.4s ease forwards;
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(20px) translateY(10px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0) translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Confidence indicator styles */
+        .response-confidence {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            background-color: var(--surface-color);
+            border: 2px solid var(--surface-color-2);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .response-confidence:hover {
+            transform: scale(1.2);
+        }
+
+        .confidence-high {
+            color: #4caf50;
+        }
+
+        .confidence-medium {
+            color: #ff9800;
+        }
+
+        .confidence-low {
+            color: #f44336;
+        }
+
+        /* Typing indicator */
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+        }
+
+        .typing-indicator .message-content {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .typing-indicator .message-content:after {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            animation: typingBounce 1.5s infinite;
+            background-color: var(--text-color-secondary);
+            opacity: 0.7;
+        }
+
+        .typing-indicator .message-content:before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            animation: typingBounce 1.5s infinite 0.2s;
+            background-color: var(--text-color-secondary);
+            opacity: 0.7;
+        }
+
+        .typing-indicator .message-content span {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            animation: typingBounce 1.5s infinite 0.4s;
+            background-color: var(--text-color-secondary);
+            opacity: 0.7;
+        }
+
+        @keyframes typingBounce {
+
+            0%,
+            60%,
+            100% {
+                transform: translateY(0);
+            }
+
+            30% {
+                transform: translateY(-4px);
+            }
+        }
+
+        #chatbot-input-container {
+            display: flex;
+            padding: 16px;
+            border-top: 1px solid rgba(0, 0, 0, 0.08);
+            background-color: var(--surface-color);
+            position: relative;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        #chatbot-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 24px;
+            background-color: var(--surface-color-2);
+            color: var(--text-color);
+            outline: none;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+
+        #chatbot-input:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(98, 0, 238, 0.15);
+        }
+
+        #chatbot-send {
+            background: linear-gradient(135deg, var(--accent-color), #4a00e0);
+            color: white;
+            border: none;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            margin-left: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        #chatbot-send i {
+            transition: transform 0.3s ease;
+        }
+
+        #chatbot-send:hover {
+            transform: scale(1.05) rotate(5deg);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        #chatbot-send:hover i {
+            transform: translateX(2px);
+        }
+
+        #chatbot-send:active {
+            transform: scale(0.95);
+        }
+
+        [data-theme="dark"] #chatbot-input {
+            border-color: rgba(255, 255, 255, 0.1);
+            background-color: var(--dark-surface-2);
+        }
+
+        [data-theme="dark"] .bot-message {
+            background-color: var(--dark-surface-2);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        [data-theme="dark"] #chatbot-messages {
+            background-image: radial-gradient(rgba(255, 255, 255, 0.03) 2px, transparent 2px);
+        }
+
+        /* Quick reply styling */
+        #chatbot-quick-replies {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 10px 20px;
+            max-width: 100%;
+            overflow-x: auto;
+            transition: all 0.4s ease;
+            animation: fadeIn 0.4s ease forwards;
+            background-color: var(--surface-color);
+            border-top: 1px solid rgba(0, 0, 0, 0.08);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        #chatbot-quick-replies.hidden {
+            display: none;
+        }
+
+        .quick-reply-btn {
+            background-color: transparent;
+            color: var(--accent-color);
+            border: 1px solid var(--accent-color);
+            padding: 8px 14px;
+            border-radius: 18px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.85rem;
+            white-space: nowrap;
+            font-weight: 500;
+        }
+
+        .quick-reply-btn:hover {
+            background-color: rgba(98, 0, 238, 0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .quick-reply-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Feedback comment input */
+        .feedback-comment-input {
+            width: 100%;
+            margin-top: 8px;
+            padding: 8px 12px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-color);
+            background-color: var(--surface-color);
+            transition: all 0.3s ease;
+        }
+
+        .feedback-comment-input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(98, 0, 238, 0.1);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            #chatbot-container {
+                width: 100%;
+                height: 70vh;
+                bottom: 0;
+                right: 0;
+                border-radius: 16px 16px 0 0;
+            }
+
+            #chatbot-quick-replies {
+                padding: 12px;
+            }
+
+            .quick-reply-btn {
+                padding: 6px 12px;
+                font-size: 0.8rem;
+            }
+
+            #chatbot-toggle {
+                width: 50px;
+                height: 50px;
+            }
+
+            #chatbot-toggle i {
+                font-size: 20px;
+            }
+        }
+
+        /* Additional mobile optimizations */
+        @media (max-width: 480px) {
+            #chatbot-container {
+                height: 80vh;
+            }
+
+            .bot-message,
+            .user-message {
+                max-width: 90%;
+                padding: 10px 14px;
+                font-size: 0.9rem;
+            }
+
+            #chatbot-header h5 {
+                font-size: 1rem;
+            }
+        }
+    </style>
+
+    <script>
+        // Chatbot functionality
+        document.addEventListener('DOMContentLoaded', function () {
+            const chatbotToggle = document.getElementById('chatbot-toggle');
+            const chatbotContainer = document.getElementById('chatbot-container');
+            const chatbotClose = document.getElementById('chatbot-close');
+            const chatbotInput = document.getElementById('chatbot-input');
+            const chatbotSend = document.getElementById('chatbot-send');
+            const chatbotMessages = document.getElementById('chatbot-messages');
+            const quickRepliesContainer = document.getElementById('chatbot-quick-replies');
+
+            // Get or set session ID from local storage
+            let sessionId = localStorage.getItem('chatbot_session_id');
+            let currentQuery = null;
+
+            // Toggle chatbot visibility
+            chatbotToggle.addEventListener('click', function () {
+                chatbotContainer.classList.toggle('hidden');
+                if (!chatbotContainer.classList.contains('hidden')) {
+                    chatbotInput.focus();
+                    // Stop the pulse animation when opened
+                    chatbotToggle.style.animation = 'none';
+                } else {
+                    // Restart the pulse animation when closed
+                    setTimeout(() => {
+                        chatbotToggle.style.animation = 'pulse 2s infinite';
+                    }, 100);
+                }
+            });
+
+            // Close chatbot
+            chatbotClose.addEventListener('click', function () {
+                chatbotContainer.classList.add('hidden');
+                // Restart the pulse animation when closed
+                setTimeout(() => {
+                    chatbotToggle.style.animation = 'pulse 2s infinite';
+                }, 100);
+            });
+
+            // Send message function
+            function sendMessage(message) {
+                // Add user message to chat
+                const userMessageElement = document.createElement('div');
+                userMessageElement.className = 'user-message';
+                userMessageElement.innerHTML = `<div class="message-content">${message}</div>`;
+                chatbotMessages.appendChild(userMessageElement);
+
+                // Clear input
+                chatbotInput.value = '';
+
+                // Scroll to bottom
+                chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+
+                // Show typing indicator
+                const typingIndicator = document.createElement('div');
+                typingIndicator.className = 'bot-message typing-indicator';
+                typingIndicator.innerHTML = '<div class="message-content">Typing<span></span></div>';
+                chatbotMessages.appendChild(typingIndicator);
+                chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+
+                // Prepare data to send
+                const requestData = {
+                    query: message
+                };
+
+                // Add session ID if available
+                if (sessionId) {
+                    requestData.session_id = sessionId;
+                }
+
+                // Send to server
+                fetch('/chatbot/api/message/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify(requestData)
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! Status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        // Debug: Log the response data in detail
+                        console.log('Chatbot response data:', data);
+                        console.log('Response type:', typeof data);
+                        if (data.results) console.log('Results length:', data.results.length);
+
+                        // Remove typing indicator
+                        chatbotMessages.removeChild(typingIndicator);
+
+                        // Save session ID if provided
+                        if (data.session_id) {
+                            sessionId = data.session_id;
+                            localStorage.setItem('chatbot_session_id', sessionId);
+                        }
+
+                        // Store the current query ID if provided
+                        if (data.query_id) {
+                            currentQuery = data.query_id;
+                            console.log(`Stored query ID: ${currentQuery}`);
+                        } else {
+                            console.warn('No query_id was provided in the response');
+                        }
+
+                        // Process and display response(s)
+                        if (data.results && Array.isArray(data.results) && data.results.length > 0) {
+                            // Display each result as a separate message
+                            data.results.forEach(result => {
+                                const botMessageElement = document.createElement('div');
+                                botMessageElement.className = 'bot-message';
+
+                                const messageContentDiv = document.createElement('div');
+                                messageContentDiv.className = 'message-content';
+
+                                // Get the message text from the result
+                                const responseText = result.text || result.content || "I couldn't understand that. Could you try again?";
+                                messageContentDiv.innerHTML = responseText;
+
+                                // Add confidence indicator if provided
+                                if (result.confidence) {
+                                    const confidenceSpan = document.createElement('span');
+                                    confidenceSpan.className = 'response-confidence';
+
+                                    // Determine confidence level indicator
+                                    let confidenceLevel = 'low';
+                                    if (result.confidence >= 80) {
+                                        confidenceLevel = 'high';
+                                    } else if (result.confidence >= 50) {
+                                        confidenceLevel = 'medium';
+                                    }
+
+                                    confidenceSpan.className += ` confidence-${confidenceLevel}`;
+                                    confidenceSpan.innerHTML = `<i class="fas fa-${confidenceLevel === 'high' ? 'check-circle' : (confidenceLevel === 'medium' ? 'info-circle' : 'question-circle')}"></i>`;
+
+                                    // Add tooltip
+                                    confidenceSpan.title = `Confidence: ${result.confidence}%`;
+
+                                    messageContentDiv.appendChild(confidenceSpan);
+                                }
+
+                                // Add feedback buttons
+                                const messageActionsDiv = document.createElement('div');
+                                messageActionsDiv.className = 'message-actions';
+
+                                // Only add feedback for longer conversations (skip for greeting)
+                                if (chatbotMessages.children.length > 2) {
+                                    const helpfulBtn = document.createElement('button');
+                                    helpfulBtn.className = 'message-action-btn helpful';
+                                    helpfulBtn.innerHTML = '<i class="fas fa-thumbs-up"></i> Helpful';
+                                    helpfulBtn.onclick = function () {
+                                        provideFeedback(currentQuery, true);
+                                        messageActionsDiv.innerHTML = '<span style="font-size: 12px; color: #4caf50;">Thank you for your feedback!</span>';
+                                    };
+
+                                    const notHelpfulBtn = document.createElement('button');
+                                    notHelpfulBtn.className = 'message-action-btn not-helpful';
+                                    notHelpfulBtn.innerHTML = '<i class="fas fa-thumbs-down"></i> Not helpful';
+                                    notHelpfulBtn.onclick = function () {
+                                        // For negative feedback, offer a way to provide additional comments
+                                        provideFeedback(currentQuery, false);
+
+                                        // Replace feedback buttons with a thank you message
+                                        messageActionsDiv.innerHTML = '<span style="font-size: 12px; color: #f44336;">Thank you for your feedback!</span>';
+                                    };
+
+                                    messageActionsDiv.appendChild(helpfulBtn);
+                                    messageActionsDiv.appendChild(notHelpfulBtn);
+                                }
+
+                                botMessageElement.appendChild(messageContentDiv);
+                                botMessageElement.appendChild(messageActionsDiv);
+                                chatbotMessages.appendChild(botMessageElement);
+                            });
+                        } else if (data.response) {
+                            // Handle legacy response format
+                            const botMessageElement = document.createElement('div');
+                            botMessageElement.className = 'bot-message';
+
+                            const messageContentDiv = document.createElement('div');
+                            messageContentDiv.className = 'message-content';
+                            messageContentDiv.innerHTML = data.response;
+
+                            const messageActionsDiv = document.createElement('div');
+                            messageActionsDiv.className = 'message-actions';
+
+                            // Add feedback buttons if in a conversation
+                            if (chatbotMessages.children.length > 2 && currentQuery) {
+                                const helpfulBtn = document.createElement('button');
+                                helpfulBtn.className = 'message-action-btn helpful';
+                                helpfulBtn.innerHTML = '<i class="fas fa-thumbs-up"></i> Helpful';
+                                helpfulBtn.onclick = function () {
+                                    provideFeedback(currentQuery, true);
+                                    messageActionsDiv.innerHTML = '<span style="font-size: 12px; color: #4caf50;">Thank you for your feedback!</span>';
+                                };
+
+                                const notHelpfulBtn = document.createElement('button');
+                                notHelpfulBtn.className = 'message-action-btn not-helpful';
+                                notHelpfulBtn.innerHTML = '<i class="fas fa-thumbs-down"></i> Not helpful';
+                                notHelpfulBtn.onclick = function () {
+                                    provideFeedback(currentQuery, false);
+                                    messageActionsDiv.innerHTML = '<span style="font-size: 12px; color: #f44336;">Thank you for your feedback!</span>';
+                                };
+
+                                messageActionsDiv.appendChild(helpfulBtn);
+                                messageActionsDiv.appendChild(notHelpfulBtn);
+                            }
+
+                            botMessageElement.appendChild(messageContentDiv);
+                            botMessageElement.appendChild(messageActionsDiv);
+                            chatbotMessages.appendChild(botMessageElement);
+                        } else if (data.error) {
+                            // Handle error response
+                            const errorMessageElement = document.createElement('div');
+                            errorMessageElement.className = 'bot-message error';
+                            errorMessageElement.innerHTML = `<div class="message-content">Sorry, there was an error: ${data.error}</div>`;
+                            chatbotMessages.appendChild(errorMessageElement);
+                        } else {
+                            // Handle unexpected response format
+                            const fallbackMessageElement = document.createElement('div');
+                            fallbackMessageElement.className = 'bot-message';
+                            fallbackMessageElement.innerHTML = '<div class="message-content">I\'m sorry, I couldn\'t process your request properly. Please try again.</div>';
+                            chatbotMessages.appendChild(fallbackMessageElement);
+                        }
+
+                        // Display quick replies if provided
+                        if (data.quick_replies && data.quick_replies.length > 0) {
+                            showQuickReplies(data.quick_replies);
+                        } else {
+                            // Hide quick replies if none provided
+                            quickRepliesContainer.classList.add('hidden');
+                        }
+
+                        // Scroll to bottom
+                        chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+                    })
+                    .catch(error => {
+                        // Remove typing indicator
+                        chatbotMessages.removeChild(typingIndicator);
+
+                        // Add error message
+                        const errorMessageElement = document.createElement('div');
+                        errorMessageElement.className = 'bot-message error';
+                        errorMessageElement.innerHTML = '<div class="message-content">Sorry, there was an error connecting to the chatbot service. Please try again later.</div>';
+                        chatbotMessages.appendChild(errorMessageElement);
+
+                        console.error('Error:', error);
+
+                        // Scroll to bottom
+                        chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+                    });
+            }
+
+            // Function to provide feedback
+            function provideFeedback(queryId, helpful, comments = '') {
+                if (!queryId) {
+                    console.error('Cannot provide feedback: queryId is missing');
+                    return;
+                }
+
+                console.log(`Sending feedback - QueryID: ${queryId}, Helpful: ${helpful}, Comments: ${comments}`);
+
+                const feedbackData = {
+                    query_id: queryId,
+                    helpful: helpful,
+                    comments: comments,
+                    rating: helpful ? 5 : 1  // Convert boolean to rating
+                };
+
+                fetch('/chatbot/api/feedback/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify(feedbackData)
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! Status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            console.log('Feedback sent successfully:', data.message);
+                        } else {
+                            console.error('Feedback error:', data.error);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error sending feedback:', error);
+                    });
+            }
+
+            // Send message on button click
+            chatbotSend.addEventListener('click', function () {
+                const message = chatbotInput.value.trim();
+                if (message === '') return;
+                sendMessage(message);
+            });
+
+            // Send message on Enter key
+            chatbotInput.addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') {
+                    const message = chatbotInput.value.trim();
+                    if (message === '') return;
+                    sendMessage(message);
+                }
+            });
+
+            // Helper function to get CSRF cookie
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+
+            function showQuickReplies(options) {
+                quickRepliesContainer.innerHTML = '';
+                quickRepliesContainer.classList.remove('hidden');
+
+                options.forEach(option => {
+                    const button = document.createElement('button');
+                    button.className = 'quick-reply-btn';
+                    button.textContent = option;
+                    button.onclick = () => sendMessage(option);
+                    quickRepliesContainer.appendChild(button);
+                });
+
+                // Position quick replies after messages
+                chatbotContainer.insertBefore(quickRepliesContainer, chatbotInput.parentNode);
+            }
+        });
+    </script>
+</body>
+
+</html>

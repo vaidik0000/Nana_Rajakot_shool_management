@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ student.first_name }} {{ student.last_name }} - Student Details{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="row align-items-center">
+        <div class="col">
+            <h3 class="page-title">Student Details</h3>
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'core:home' %}">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'students:student_list' %}">Students</a></li>
+                <li class="breadcrumb-item active">Student Details</li>
+            </ul>
+        </div>
+        {% if not is_student and not is_teacher %}
+        <div class="col-auto text-end float-end ms-auto">
+            <a href="{% url 'students:generate_student_pdf' student.pk %}" class="btn btn-info me-2">
+                <i class="fas fa-file-pdf"></i> Generate PDF
+            </a>
+            <a href="{% url 'students:student_update' student.pk %}" class="btn btn-outline-primary me-2">
+                <i class="fas fa-edit"></i> Edit
+            </a>
+            <a href="{% url 'students:student_delete' student.pk %}" class="btn btn-danger">
+                <i class="fas fa-trash"></i> Delete
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="profile-header">
+            <div class="row align-items-center">
+                <div class="col-auto profile-image">
+                    <a href="#">
+                        {% if student.profile_picture %}
+                        <img class="rounded-circle" alt="Student Image" src="{{ student.profile_picture.url }}">
+                        {% else %}
+                        <img class="rounded-circle" alt="Student Image"
+                            src="{% static 'assets/img/profiles/avatar-02.jpg' %}">
+                        {% endif %}
+                    </a>
+                </div>
+                <div class="col ms-md-n2 profile-user-info">
+                    <h4 class="user-name mb-0">{{ student.first_name }} {{ student.last_name }}</h4>
+                    <h6 class="text-muted">Roll Number: {{ student.roll_number }}</h6>
+                    <div class="user-Location"><i class="fas fa-map-marker-alt"></i> {{ student.address }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="profile-menu">
+            <ul class="nav nav-tabs nav-tabs-solid">
+                <li class="nav-item">
+                    <a class="nav-link active" data-bs-toggle="tab" href="#per_details_tab">About</a>
+                </li>
+            </ul>
+        </div>
+        <div class="tab-content profile-tab-cont">
+            <div class="tab-pane fade show active" id="per_details_tab">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title d-flex justify-content-between">
+                                    <span>Personal Details</span>
+                                </h5>
+                                <div class="row">
+                                    <p class="col-sm-3 text-muted mb-0 mb-sm-3">Class</p>
+                                    <p class="col-sm-9">{{ student.get_class_name_display }}</p>
+                                </div>
+                                <div class="row">
+                                    <p class="col-sm-3 text-muted mb-0 mb-sm-3">Gender</p>
+                                    <p class="col-sm-9">{{ student.get_gender_display }}</p>
+                                </div>
+                                <div class="row">
+                                    <p class="col-sm-3 text-muted mb-0 mb-sm-3">Date of Birth</p>
+                                    <p class="col-sm-9">{{ student.date_of_birth }}</p>
+                                </div>
+                                <div class="row">
+                                    <p class="col-sm-3 text-muted mb-0 mb-sm-3">Email</p>
+                                    <p class="col-sm-9">{{ student.email|default:"Not provided" }}</p>
+                                </div>
+                                <div class="row">
+                                    <p class="col-sm-3 text-muted mb-0 mb-sm-3">Phone</p>
+                                    <p class="col-sm-9">{{ student.phone_number }}</p>
+                                </div>
+                                <div class="row">
+                                    <p class="col-sm-3 text-muted mb-0">Status</p>
+                                    <p class="col-sm-9">
+                                        {% if student.is_active %}
+                                        <span class="badge bg-success">Active</span>
+                                        {% else %}
+                                        <span class="badge bg-danger">Inactive</span>
+                                        {% endif %}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title d-flex justify-content-between">
+                                    <span>Parent Details</span>
+                                </h5>
+                                <div class="row">
+                                    <p class="col-sm-3 text-muted mb-0 mb-sm-3">Parent Name</p>
+                                    <p class="col-sm-9">{{ student.parent_name }}</p>
+                                </div>
+                                <div class="row">
+                                    <p class="col-sm-3 text-muted mb-0 mb-sm-3">Parent Phone</p>
+                                    <p class="col-sm-9">{{ student.parent_phone }}</p>
+                                </div>
+                                <div class="row">
+                                    <p class="col-sm-3 text-muted mb-0 mb-sm-3">Parent Email</p>
+                                    <p class="col-sm-9">{{ student.parent_email|default:"Not provided" }}</p>
+                                </div>
+                                <div class="row">
+                                    <p class="col-sm-3 text-muted mb-0 mb-sm-3">Admission Date</p>
+                                    <p class="col-sm-9">{{ student.admission_date }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

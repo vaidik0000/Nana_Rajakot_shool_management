@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Fee Transactions - School Management System{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="row align-items-center">
+        <div class="col">
+            <h3 class="page-title">Fee Transactions</h3>
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'core:home' %}">Dashboard</a></li>
+                <li class="breadcrumb-item active">Fee Transactions</li>
+            </ul>
+        </div>
+        <div class="col-auto text-right float-right ml-auto">
+            <a href="{% url 'fees:initiate_payment' %}" class="btn btn-primary"><i class="fas fa-plus"></i> Make
+                Payment</a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="card">
+            <div class="card-body">
+                {% if messages %}
+                <div class="messages">
+                    {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>Transaction ID</th>
+                                <th>Student</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                                <th class="text-right">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for transaction in transactions %}
+                            <tr>
+                                <td>{{ transaction.transaction_id|default:"N/A" }}</td>
+                                <td>
+                                    <h2 class="table-avatar">
+                                        {% if transaction.student.profile_picture %}
+                                        <a href="{% url 'students:student_detail' transaction.student.id %}"
+                                            class="avatar avatar-sm mr-2">
+                                            <img class="avatar-img rounded-circle"
+                                                src="{{ transaction.student.profile_picture.url }}" alt="Student Image">
+                                        </a>
+                                        {% endif %}
+                                        <a href="{% url 'students:student_detail' transaction.student.id %}">
+                                            {{ transaction.student.first_name }} {{ transaction.student.last_name }}
+                                            <span>{{ transaction.student.roll_number }}</span>
+                                        </a>
+                                    </h2>
+                                </td>
+                                <td>₹{{ transaction.amount }}</td>
+                                <td>
+                                    {% if transaction.status == 'completed' %}
+                                    <span class="badge badge-success">Completed</span>
+                                    {% elif transaction.status == 'pending' %}
+                                    <span class="badge badge-warning">Pending</span>
+                                    {% else %}
+                                    <span class="badge badge-danger">Failed</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ transaction.created_at|date:"d M, Y" }}</td>
+                                <td class="text-right">
+                                    <div class="actions">
+                                        {% if transaction.status == 'pending' %}
+                                        <a href="{% url 'fees:initiate_payment' transaction.student.id %}"
+                                            class="btn btn-sm bg-success-light mr-2">
+                                            <i class="fas fa-credit-card"></i> Pay Now
+                                        </a>
+                                        {% endif %}
+                                        <a href="{% url 'students:student_detail' transaction.student.id %}"
+                                            class="btn btn-sm bg-info-light">
+                                            <i class="fas fa-eye"></i> View Student
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="6" class="text-center">No transactions found.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

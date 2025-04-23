@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ subject.name }} - School Management System{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="row align-items-center">
+        <div class="col">
+            <h3 class="page-title">Subject Details</h3>
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'core:home' %}">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'subjects:subject_list' %}">Subjects</a></li>
+                <li class="breadcrumb-item active">{{ subject.name }}</li>
+            </ul>
+        </div>
+        {% if not is_student and not is_teacher %}
+        <div class="col-auto">
+            <a href="{% url 'subjects:subject_update' subject.pk %}" class="btn btn-primary">
+                <i class="fas fa-pencil"></i> Edit Subject
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="about-info">
+                            <h4>{{ subject.name }} <span class="text-muted">({{ subject.code }})</span></h4>
+                            {% if subject.is_active %}
+                            <span class="badge badge-success">Active</span>
+                            {% else %}
+                            <span class="badge badge-danger">Inactive</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-md-12">
+                        <h5 class="mb-3">Subject Information</h5>
+                        <table class="table table-bordered">
+                            <tbody>
+                                <tr>
+                                    <th width="30%">Subject Name</th>
+                                    <td>{{ subject.name }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Subject Code</th>
+                                    <td>{{ subject.code }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Credits</th>
+                                    <td>{{ subject.credits }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Teacher</th>
+                                    <td>
+                                        {% if subject.teacher %}
+                                        <a href="{% url 'school_teachers:teacher_detail' subject.teacher.pk %}">
+                                            {{ subject.teacher.full_name }}
+                                        </a>
+                                        {% else %}
+                                        Not Assigned
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Description</th>
+                                    <td>{{ subject.description|linebreaks }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Status</th>
+                                    <td>
+                                        {% if subject.is_active %}
+                                        <span class="badge badge-success">Active</span>
+                                        {% else %}
+                                        <span class="badge badge-danger">Inactive</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Created At</th>
+                                    <td>{{ subject.created_at }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Last Updated</th>
+                                    <td>{{ subject.updated_at }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

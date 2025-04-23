@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ event.title }} - School Management System{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="row align-items-center">
+        <div class="col">
+            <h3 class="page-title">Event Details</h3>
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'core:home' %}">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'events:event_list' %}">Events</a></li>
+                <li class="breadcrumb-item active">{{ event.title }}</li>
+            </ul>
+        </div>
+        {% if not is_student %}
+        <div class="col-auto">
+            <a href="{% url 'events:event_edit' event.pk %}" class="btn btn-primary">
+                <i class="fas fa-pencil"></i> Edit Event
+            </a>
+            <a href="{% url 'events:event_delete' event.pk %}" class="btn btn-danger">
+                <i class="fas fa-trash"></i> Delete Event
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Title</label>
+                            <p>{{ event.title }}</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Event Type</label>
+                            <p>{{ event.get_event_type_display }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Start Date</label>
+                            <p>{{ event.start_date|date:"d M Y" }}</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>End Date</label>
+                            <p>{{ event.end_date|date:"d M Y" }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Location</label>
+                            <p>{{ event.location|default:"-" }}</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>All Day Event</label>
+                            <p>{% if event.is_all_day %}Yes{% else %}No{% endif %}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>Description</label>
+                            <p>{{ event.description|linebreaks }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Status</label>
+                            <p>
+                                {% if event.is_past %}
+                                <span class="badge bg-danger">Past</span>
+                                {% elif event.is_ongoing %}
+                                <span class="badge bg-success">Ongoing</span>
+                                {% else %}
+                                <span class="badge bg-info">Upcoming</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Created</label>
+                            <p>{{ event.created_at|date:"d M Y H:i" }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-end mt-4">
+                    <a href="{% url 'events:event_list' %}" class="btn btn-secondary">Back to Events</a>
+                </div>
+
+                <!-- Action buttons -->
+                <div class="row mt-4">
+                    <div class="col-md-12">
+                        <a href="{% url 'events:event_list' %}" class="btn btn-secondary">Back to Event List</a>
+
+                        {% if not is_student and request.user_type or request.user.is_staff or request.user.is_superuser %}
+                            <a href="{% url 'events:event_edit' event.id %}" class="btn btn-primary">Edit Event</a>
+                            <a href="{% url 'events:event_delete' event.id %}" class="btn btn-danger">Delete Event</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

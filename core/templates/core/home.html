@@ -1,0 +1,181 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}School Management System{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <h1 class="mb-4">Welcome to School Management System</h1>
+
+            {% if user.is_authenticated %}
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Students</h5>
+                            <p class="card-text">{{ student_count }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Teachers</h5>
+                            <p class="card-text">{{ teacher_count }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Subjects</h5>
+                            <p class="card-text">{{ subject_count }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Total Revenue</h5>
+                            <p class="card-text">${{ total_revenue }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- User Permissions Card -->
+            <div class="row mt-4">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="card-title mb-0">Your Account Permissions</h5>
+                        </div>
+                        <div class="card-body">
+                            {% if request.user_type == 'teacher' %}
+                            <div class="alert alert-info">
+                                <h5>Teacher Account</h5>
+                                <p>As a teacher, you have the following permissions:</p>
+                                <ul>
+                                    <li>View, add, edit, and delete students</li>
+                                    <li>View, add, edit, and delete subjects</li>
+                                    <li>View, add, edit, and delete student marks</li>
+                                    <li>Manage attendance for all students</li>
+                                </ul>
+                            </div>
+                            {% elif request.user_type == 'student' %}
+                            <div class="alert alert-info">
+                                <h5>Student Account</h5>
+                                <p>As a student, you have the following permissions:</p>
+                                <ul>
+                                    <li>View your profile information</li>
+                                    <li>View subjects</li>
+                                    <li>View your marks</li>
+                                    <li>View your attendance records</li>
+                                </ul>
+                                <p class="mb-0">You cannot modify student records, marks, or attendance.</p>
+                            </div>
+                            {% elif user.is_staff or user.is_superuser %}
+                            <div class="alert alert-info">
+                                <h5>Admin Account</h5>
+                                <p>As an administrator, you have full access to all features of the system.</p>
+                            </div>
+                            {% else %}
+                            <div class="alert alert-warning">
+                                <h5>Standard Account</h5>
+                                <p>Your account type could not be determined. Please contact an administrator for
+                                    assistance.</p>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Recent Payments</h5>
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Student</th>
+                                            <th>Amount</th>
+                                            <th>Date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for payment in recent_payments %}
+                                        <tr>
+                                            <td>{{ payment.student.name }}</td>
+                                            <td>${{ payment.amount_paid }}</td>
+                                            <td>{{ payment.payment_date }}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Upcoming Events</h5>
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Event</th>
+                                            <th>Date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for event in upcoming_events %}
+                                        <tr>
+                                            <td>{{ event.title }}</td>
+                                            <td>{{ event.start_date }}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="jumbotron">
+                <h2>Get Started</h2>
+                <p class="lead">Please log in to access the school management system.</p>
+                <hr class="my-4">
+                <p>If you don't have an account, you can sign up here.</p>
+                <a class="btn btn-primary btn-lg" href="{% url 'core:login' %}" role="button">Login</a>
+                <a class="btn btn-secondary btn-lg" href="{% url 'core:signup' %}" role="button">Sign Up</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    $(document).ready(function () {
+        // Initialize tooltips
+        $('[data-toggle="tooltip"]').tooltip();
+
+        // Initialize slimscroll for sidebar
+        $('.sidebar-inner').slimScroll({
+            height: '100%',
+            position: 'right',
+            size: "5px",
+            color: '#dcdcdc',
+            wheelStep: 10
+        });
+    });
+</script>
+{% endblock %}

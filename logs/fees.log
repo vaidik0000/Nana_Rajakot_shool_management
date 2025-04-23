@@ -1,0 +1,288 @@
+2025-04-13 16:45:08 - INFO - views.py:24 - <module> - Using Razorpay Key ID: rzp_test_vzDdnEERo2Kj1K
+2025-04-13 16:45:22 - INFO - apps.py:15 - ready - Fees module initialized
+2025-04-13 16:45:26 - INFO - views.py:24 - <module> - Using Razorpay Key ID: rzp_test_vzDdnEERo2Kj1K
+2025-04-13 16:45:34 - INFO - apps.py:15 - ready - Fees module initialized
+2025-04-13 16:45:38 - INFO - views.py:24 - <module> - Using Razorpay Key ID: rzp_test_vzDdnEERo2Kj1K
+2025-04-13 16:47:19 - INFO - apps.py:15 - ready - Fees module initialized
+2025-04-13 16:47:23 - INFO - views.py:30 - <module> - Using Razorpay Key ID: rzp_test_vzDdnEERo2Kj1K
+2025-04-13 16:47:33 - INFO - apps.py:15 - ready - Fees module initialized
+2025-04-13 16:47:34 - INFO - apps.py:15 - ready - Fees module initialized
+2025-04-13 16:47:38 - INFO - views.py:30 - <module> - Using Razorpay Key ID: rzp_test_vzDdnEERo2Kj1K
+2025-04-13 16:51:51 - INFO - apps.py:15 - ready - Fees module initialized
+2025-04-13 16:53:58 - INFO - apps.py:15 - ready - Fees module initialized
+2025-04-13 16:54:02 - INFO - views.py:30 - <module> - Using Razorpay Key ID: rzp_test_vzDdnEERo2Kj1K
+2025-04-13 16:54:05 - ERROR - check_payment_status.py:157 - check_razorpay_dashboard - Error fetching from Razorpay dashboard: from must be an integer.
+2025-04-13 16:54:57 - INFO - apps.py:15 - ready - Fees module initialized
+2025-04-13 16:55:01 - INFO - views.py:30 - <module> - Using Razorpay Key ID: rzp_test_vzDdnEERo2Kj1K
+2025-04-13 16:59:42 - INFO - apps.py:15 - ready - Fees module initialized
+2025-04-13 16:59:47 - INFO - views.py:30 - <module> - Using Razorpay Key ID: rzp_test_vzDdnEERo2Kj1K
+2025-04-13 17:03:52 - INFO - apps.py:15 - ready - Fees module initialized
+2025-04-13 17:03:53 - INFO - check_razorpay.py:28 - check_razorpay_dashboard - Connected to Razorpay with key ID: rzp_test_vzDdnEERo2Kj1K
+2025-04-13 17:04:11 - INFO - apps.py:15 - ready - Fees module initialized
+2025-04-13 17:13:12 - INFO - apps.py:15 - ready - Fees module initialized
+2025-04-13 17:13:14 - INFO - apps.py:15 - ready - Fees module initialized
+2025-04-13 17:13:18 - INFO - views.py:30 - <module> - Using Razorpay Key ID: rzp_test_vzDdnEERo2Kj1K
+2025-04-13 17:22:05 - INFO - views.py:56 - initiate_payment - Student detected: Yash Gupta (ID: 25)
+2025-04-13 17:22:50 - INFO - logging.py:21 - log_payment_attempt - Payment attempt initiated | Student ID: 25 | Amount: 10.0 | User ID: Same as student
+2025-04-13 17:22:52 - INFO - views.py:113 - initiate_payment - Razorpay order created: order_QIX3J1GdTmZ1tZ for student 25
+2025-04-13 17:22:52 - DEBUG - views.py:114 - initiate_payment - Order details: {'amount': 1000, 'amount_due': 1000, 'amount_paid': 0, 'attempts': 0, 'created_at': 1744545173, 'currency': 'INR', 'entity': 'order', 'id': 'order_QIX3J1GdTmZ1tZ', 'notes': [], 'offer_id': None, 'receipt': 'receipt_7', 'status': 'created'}
+2025-04-13 17:25:20 - INFO - views.py:157 - payment_callback - Payment callback received
+2025-04-13 17:25:20 - DEBUG - views.py:158 - payment_callback - POST data: <QueryDict: {'csrfmiddlewaretoken': ['1DQ9nnCBPt00TEHHx0DCWFh96d9GQARqBz0jUSg9Jg82FrLfvvQcw894PXKy7NUv'], 'csrf_token': ['1DQ9nnCBPt00TEHHx0DCWFh96d9GQARqBz0jUSg9Jg82FrLfvvQcw894PXKy7NUv'], 'razorpay_payment_id': ['pay_QIX5fkS7jdiXok'], 'razorpay_order_id': ['order_QIX3J1GdTmZ1tZ'], 'razorpay_signature': ['084f37948a3ea0a753eb43e2aba0ad075199d3f26aae894b9c09c2f81e1dc174']}>
+2025-04-13 17:25:20 - INFO - views.py:166 - payment_callback - Payment callback: payment_id=pay_QIX5fkS7jdiXok, order_id=order_QIX3J1GdTmZ1tZ
+2025-04-13 17:25:20 - INFO - views.py:191 - payment_callback - Signature verification result: True
+2025-04-13 17:25:20 - INFO - logging.py:36 - log_payment_success - Payment successful | Transaction ID: 7 | Payment ID: pay_QIX5fkS7jdiXok | Order ID: order_QIX3J1GdTmZ1tZ | Amount: 10.00
+2025-04-13 17:25:20 - INFO - views.py:384 - payment_success - Displaying payment success page for transaction 7
+2025-04-13 18:10:48 - INFO - apps.py:15 - ready - Fees module initialized
+2025-04-13 18:11:04 - INFO - apps.py:15 - ready - Fees module initialized
+2025-04-13 18:15:37 - INFO - apps.py:15 - ready - Fees module initialized
+2025-04-13 18:15:42 - INFO - views.py:30 - <module> - Using Razorpay Key ID: rzp_test_vzDdnEERo2Kj1K
+2025-04-13 18:15:49 - INFO - apps.py:15 - ready - Fees module initialized
+2025-04-13 18:16:08 - INFO - apps.py:15 - ready - Fees module initialized
+2025-04-13 18:16:27 - INFO - apps.py:15 - ready - Fees module initialized
+2025-04-13 18:16:31 - INFO - views.py:30 - <module> - Using Razorpay Key ID: rzp_test_vzDdnEERo2Kj1K
+2025-04-13 18:17:45 - INFO - apps.py:15 - ready - Fees module initialized
+2025-04-13 18:17:46 - INFO - apps.py:15 - ready - Fees module initialized
+2025-04-13 18:17:50 - INFO - views.py:30 - <module> - Using Razorpay Key ID: rzp_test_vzDdnEERo2Kj1K
+2025-04-13 18:18:31 - INFO - apps.py:15 - ready - Fees module initialized
+2025-04-13 18:19:57 - INFO - apps.py:15 - ready - Fees module initialized
+2025-04-13 18:20:03 - INFO - views.py:30 - <module> - Using Razorpay Key ID: rzp_test_vzDdnEERo2Kj1K
+2025-04-13 18:25:17 - INFO - views.py:30 - <module> - Using Razorpay Key ID: rzp_test_vzDdnEERo2Kj1K
+2025-04-13 21:00:34 - INFO - views.py:56 - initiate_payment - Student detected: Yash Gupta (ID: 25)
+2025-04-13 21:14:30 - INFO - views.py:56 - initiate_payment - Student detected: Yash Gupta (ID: 25)
+2025-04-13 21:14:42 - INFO - logging.py:21 - log_payment_attempt - Payment attempt initiated | Student ID: 25 | Amount: 50.0 | User ID: Same as student
+2025-04-13 21:14:44 - INFO - views.py:113 - initiate_payment - Razorpay order created: order_QIb0DfPE1T7h8y for student 25
+2025-04-13 21:14:44 - DEBUG - views.py:114 - initiate_payment - Order details: {'amount': 5000, 'amount_due': 5000, 'amount_paid': 0, 'attempts': 0, 'created_at': 1744559084, 'currency': 'INR', 'entity': 'order', 'id': 'order_QIb0DfPE1T7h8y', 'notes': [], 'offer_id': None, 'receipt': 'receipt_8', 'status': 'created'}
+2025-04-13 21:15:37 - INFO - views.py:157 - payment_callback - Payment callback received
+2025-04-13 21:15:37 - DEBUG - views.py:158 - payment_callback - POST data: <QueryDict: {'csrfmiddlewaretoken': ['XdXsErwW29IdDU1GWhlaCzFCHhITG1SHAkr7ZoMQEnoTkewqVdqOHzWltx0op7ib'], 'csrf_token': ['XdXsErwW29IdDU1GWhlaCzFCHhITG1SHAkr7ZoMQEnoTkewqVdqOHzWltx0op7ib'], 'razorpay_payment_id': ['pay_QIb0vUBZwPF0Ag'], 'razorpay_order_id': ['order_QIb0DfPE1T7h8y'], 'razorpay_signature': ['f8bf68317b19ab6e3b61f65cfc48892f9f156d406962c0f9651171685856d5d2']}>
+2025-04-13 21:15:37 - INFO - views.py:166 - payment_callback - Payment callback: payment_id=pay_QIb0vUBZwPF0Ag, order_id=order_QIb0DfPE1T7h8y
+2025-04-13 21:15:37 - INFO - views.py:191 - payment_callback - Signature verification result: True
+2025-04-13 21:15:37 - INFO - logging.py:36 - log_payment_success - Payment successful | Transaction ID: 8 | Payment ID: pay_QIb0vUBZwPF0Ag | Order ID: order_QIb0DfPE1T7h8y | Amount: 50.00
+2025-04-13 21:15:37 - INFO - views.py:384 - payment_success - Displaying payment success page for transaction 8
+2025-04-13 21:50:58 - INFO - views.py:56 - initiate_payment - Student detected: Yash Gupta (ID: 25)
+2025-04-13 22:33:00 - INFO - views.py:56 - initiate_payment - Student detected: Test Student (ID: 1)
+2025-04-13 22:57:08 - INFO - views.py:56 - initiate_payment - Student detected: vaidik kotadiya (ID: 27)
+2025-04-13 22:57:18 - INFO - logging.py:21 - log_payment_attempt - Payment attempt initiated | Student ID: 27 | Amount: 50000.0 | User ID: Same as student
+2025-04-13 22:57:19 - INFO - views.py:113 - initiate_payment - Razorpay order created: order_QIckapYTIjf2CX for student 27
+2025-04-13 22:57:19 - DEBUG - views.py:114 - initiate_payment - Order details: {'amount': 5000000, 'amount_due': 5000000, 'amount_paid': 0, 'attempts': 0, 'created_at': 1744565240, 'currency': 'INR', 'entity': 'order', 'id': 'order_QIckapYTIjf2CX', 'notes': [], 'offer_id': None, 'receipt': 'receipt_1', 'status': 'created'}
+2025-04-13 22:57:53 - INFO - views.py:157 - payment_callback - Payment callback received
+2025-04-13 22:57:53 - DEBUG - views.py:158 - payment_callback - POST data: <QueryDict: {'csrfmiddlewaretoken': ['AZ4hADVIJA9cnaMK9W79DNht2N4EbycaotybMRsIuc2PbCnPEipMURP31rwedVcG'], 'csrf_token': ['AZ4hADVIJA9cnaMK9W79DNht2N4EbycaotybMRsIuc2PbCnPEipMURP31rwedVcG'], 'razorpay_payment_id': ['pay_QIcky4SGlQYxOc'], 'razorpay_order_id': ['order_QIckapYTIjf2CX'], 'razorpay_signature': ['55553d13245fd2359a848af23d9192a0730f9ce1a1d4fc20bcb5d4c5128fe200']}>
+2025-04-13 22:57:53 - INFO - views.py:166 - payment_callback - Payment callback: payment_id=pay_QIcky4SGlQYxOc, order_id=order_QIckapYTIjf2CX
+2025-04-13 22:57:53 - INFO - views.py:191 - payment_callback - Signature verification result: True
+2025-04-13 22:57:53 - INFO - logging.py:36 - log_payment_success - Payment successful | Transaction ID: 1 | Payment ID: pay_QIcky4SGlQYxOc | Order ID: order_QIckapYTIjf2CX | Amount: 50000.00
+2025-04-13 22:57:53 - INFO - views.py:384 - payment_success - Displaying payment success page for transaction 1
+2025-04-13 23:24:12 - INFO - views.py:158 - payment_callback - Payment callback received
+2025-04-13 23:24:12 - DEBUG - views.py:159 - payment_callback - POST data: <QueryDict: {'razorpay_payment_id': ['pay_test_fail'], 'razorpay_order_id': ['order_callback_fail'], 'razorpay_signature': ['invalid_signature']}>
+2025-04-13 23:24:12 - INFO - views.py:167 - payment_callback - Payment callback: payment_id=pay_test_fail, order_id=order_callback_fail
+2025-04-13 23:24:12 - ERROR - logging.py:66 - log_payment_error - Payment error: {
+  "error_type": "signature_verification",
+  "error_message": "Razorpay Signature Verification Failed",
+  "timestamp": "2025-04-13T23:24:12.849243",
+  "transaction_id": null,
+  "additional_data": {
+    "payment_id": "pay_test_fail",
+    "order_id": "order_callback_fail"
+  },
+  "traceback": "Traceback (most recent call last):\n  File \"D:\\Django2.0\\School\\fees\\views.py\", line 191, in payment_callback\n    result = razorpay_client.utility.verify_payment_signature(params_dict)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\91991\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\razorpay\\utility\\utility.py\", line 22, in verify_payment_signature\n    return self.verify_signature(msg, razorpay_signature, secret)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\91991\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\razorpay\\utility\\utility.py\", line 76, in verify_signature\n    raise SignatureVerificationError(\nrazorpay.errors.SignatureVerificationError: Razorpay Signature Verification Failed\n"
+}
+2025-04-13 23:24:13 - INFO - views.py:158 - payment_callback - Payment callback received
+2025-04-13 23:24:13 - DEBUG - views.py:159 - payment_callback - POST data: <QueryDict: {'razorpay_payment_id': ['pay_test123'], 'razorpay_order_id': ['order_callback123'], 'razorpay_signature': ['valid_signature']}>
+2025-04-13 23:24:13 - INFO - views.py:167 - payment_callback - Payment callback: payment_id=pay_test123, order_id=order_callback123
+2025-04-13 23:24:13 - ERROR - logging.py:66 - log_payment_error - Payment error: {
+  "error_type": "signature_verification",
+  "error_message": "Razorpay Signature Verification Failed",
+  "timestamp": "2025-04-13T23:24:13.980032",
+  "transaction_id": null,
+  "additional_data": {
+    "payment_id": "pay_test123",
+    "order_id": "order_callback123"
+  },
+  "traceback": "Traceback (most recent call last):\n  File \"D:\\Django2.0\\School\\fees\\views.py\", line 191, in payment_callback\n    result = razorpay_client.utility.verify_payment_signature(params_dict)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\91991\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\razorpay\\utility\\utility.py\", line 22, in verify_payment_signature\n    return self.verify_signature(msg, razorpay_signature, secret)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\91991\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\razorpay\\utility\\utility.py\", line 76, in verify_signature\n    raise SignatureVerificationError(\nrazorpay.errors.SignatureVerificationError: Razorpay Signature Verification Failed\n"
+}
+2025-04-13 23:25:42 - INFO - views.py:158 - payment_callback - Payment callback received
+2025-04-13 23:25:42 - DEBUG - views.py:159 - payment_callback - POST data: <QueryDict: {'razorpay_payment_id': ['pay_test_fail'], 'razorpay_order_id': ['order_callback_fail'], 'razorpay_signature': ['invalid_signature']}>
+2025-04-13 23:25:42 - INFO - views.py:167 - payment_callback - Payment callback: payment_id=pay_test_fail, order_id=order_callback_fail
+2025-04-13 23:25:42 - ERROR - logging.py:66 - log_payment_error - Payment error: {
+  "error_type": "signature_verification",
+  "error_message": "Razorpay Signature Verification Failed",
+  "timestamp": "2025-04-13T23:25:42.416900",
+  "transaction_id": null,
+  "additional_data": {
+    "payment_id": "pay_test_fail",
+    "order_id": "order_callback_fail"
+  },
+  "traceback": "Traceback (most recent call last):\n  File \"D:\\Django2.0\\School\\fees\\views.py\", line 191, in payment_callback\n    result = razorpay_client.utility.verify_payment_signature(params_dict)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\91991\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\razorpay\\utility\\utility.py\", line 22, in verify_payment_signature\n    return self.verify_signature(msg, razorpay_signature, secret)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\91991\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\razorpay\\utility\\utility.py\", line 76, in verify_signature\n    raise SignatureVerificationError(\nrazorpay.errors.SignatureVerificationError: Razorpay Signature Verification Failed\n"
+}
+2025-04-13 23:25:43 - INFO - views.py:158 - payment_callback - Payment callback received
+2025-04-13 23:25:43 - DEBUG - views.py:159 - payment_callback - POST data: <QueryDict: {'razorpay_payment_id': ['pay_test123'], 'razorpay_order_id': ['order_callback123'], 'razorpay_signature': ['valid_signature']}>
+2025-04-13 23:25:43 - INFO - views.py:167 - payment_callback - Payment callback: payment_id=pay_test123, order_id=order_callback123
+2025-04-13 23:25:43 - ERROR - logging.py:66 - log_payment_error - Payment error: {
+  "error_type": "signature_verification",
+  "error_message": "Razorpay Signature Verification Failed",
+  "timestamp": "2025-04-13T23:25:43.152133",
+  "transaction_id": null,
+  "additional_data": {
+    "payment_id": "pay_test123",
+    "order_id": "order_callback123"
+  },
+  "traceback": "Traceback (most recent call last):\n  File \"D:\\Django2.0\\School\\fees\\views.py\", line 191, in payment_callback\n    result = razorpay_client.utility.verify_payment_signature(params_dict)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\91991\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\razorpay\\utility\\utility.py\", line 22, in verify_payment_signature\n    return self.verify_signature(msg, razorpay_signature, secret)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\91991\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\razorpay\\utility\\utility.py\", line 76, in verify_signature\n    raise SignatureVerificationError(\nrazorpay.errors.SignatureVerificationError: Razorpay Signature Verification Failed\n"
+}
+2025-04-13 23:25:43 - INFO - logging.py:79 - log_webhook_event - Webhook event received | Type: payment.authorized | Event ID: no_id | Order ID: N/A | Status: N/A
+2025-04-13 23:25:43 - DEBUG - logging.py:87 - log_webhook_event - Webhook raw data: {
+  "event": "payment.authorized",
+  "payload": {
+    "payment": {
+      "entity": {
+        "id": "pay_webhook123",
+        "order_id": "order_webhook123",
+        "amount": 500000,
+        "status": "authorized"
+      }
+    }
+  }
+}
+2025-04-13 23:25:43 - ERROR - logging.py:66 - log_payment_error - Payment error: {
+  "error_type": "webhook_signature_verification",
+  "error_message": "Razorpay Signature Verification Failed",
+  "timestamp": "2025-04-13T23:25:43.541929",
+  "transaction_id": null,
+  "additional_data": {
+    "event_type": "payment.authorized",
+    "event_id": "no_id"
+  },
+  "traceback": "Traceback (most recent call last):\n  File \"D:\\Django2.0\\School\\fees\\views.py\", line 298, in webhook_handler\n    razorpay_client.utility.verify_webhook_signature(\n  File \"C:\\Users\\91991\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\razorpay\\utility\\utility.py\", line 57, in verify_webhook_signature\n    return self.verify_signature(body, signature, secret)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\91991\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\razorpay\\utility\\utility.py\", line 76, in verify_signature\n    raise SignatureVerificationError(\nrazorpay.errors.SignatureVerificationError: Razorpay Signature Verification Failed\n"
+}
+2025-04-13 23:25:43 - INFO - logging.py:79 - log_webhook_event - Webhook event received | Type: payment.authorized | Event ID: no_id | Order ID: N/A | Status: N/A
+2025-04-13 23:25:43 - DEBUG - logging.py:87 - log_webhook_event - Webhook raw data: {
+  "event": "payment.authorized",
+  "payload": {
+    "payment": {
+      "entity": {
+        "id": "pay_webhook_invalid",
+        "order_id": "order_webhook123",
+        "amount": 500000,
+        "status": "authorized"
+      }
+    }
+  }
+}
+2025-04-13 23:25:43 - ERROR - logging.py:66 - log_payment_error - Payment error: {
+  "error_type": "webhook_signature_verification",
+  "error_message": "Razorpay Signature Verification Failed",
+  "timestamp": "2025-04-13T23:25:43.924080",
+  "transaction_id": null,
+  "additional_data": {
+    "event_type": "payment.authorized",
+    "event_id": "no_id"
+  },
+  "traceback": "Traceback (most recent call last):\n  File \"D:\\Django2.0\\School\\fees\\views.py\", line 298, in webhook_handler\n    razorpay_client.utility.verify_webhook_signature(\n  File \"C:\\Users\\91991\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\razorpay\\utility\\utility.py\", line 57, in verify_webhook_signature\n    return self.verify_signature(body, signature, secret)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\91991\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\razorpay\\utility\\utility.py\", line 76, in verify_signature\n    raise SignatureVerificationError(\nrazorpay.errors.SignatureVerificationError: Razorpay Signature Verification Failed\n"
+}
+2025-04-13 23:26:59 - INFO - logging.py:21 - log_payment_attempt - Payment attempt initiated | Student ID: 1 | Amount: 2000.0 | User ID: 1
+2025-04-13 23:27:01 - INFO - views.py:114 - initiate_payment - Razorpay order created: order_QIdFxFEgIziJ8V for student 1
+2025-04-13 23:27:01 - DEBUG - views.py:115 - initiate_payment - Order details: {'amount': 200000, 'amount_due': 200000, 'amount_paid': 0, 'attempts': 0, 'created_at': 1744567021, 'currency': 'INR', 'entity': 'order', 'id': 'order_QIdFxFEgIziJ8V', 'notes': [], 'offer_id': None, 'receipt': 'receipt_2', 'status': 'created'}
+2025-04-13 23:27:01 - INFO - views.py:158 - payment_callback - Payment callback received
+2025-04-13 23:27:01 - DEBUG - views.py:159 - payment_callback - POST data: <QueryDict: {'razorpay_payment_id': ['pay_test_fail'], 'razorpay_order_id': ['order_callback_fail'], 'razorpay_signature': ['invalid_signature']}>
+2025-04-13 23:27:01 - INFO - views.py:167 - payment_callback - Payment callback: payment_id=pay_test_fail, order_id=order_callback_fail
+2025-04-13 23:27:01 - ERROR - logging.py:66 - log_payment_error - Payment error: {
+  "error_type": "signature_verification",
+  "error_message": "Razorpay Signature Verification Failed",
+  "timestamp": "2025-04-13T23:27:01.636855",
+  "transaction_id": null,
+  "additional_data": {
+    "payment_id": "pay_test_fail",
+    "order_id": "order_callback_fail"
+  },
+  "traceback": "Traceback (most recent call last):\n  File \"D:\\Django2.0\\School\\fees\\views.py\", line 191, in payment_callback\n    result = razorpay_client.utility.verify_payment_signature(params_dict)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\91991\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\razorpay\\utility\\utility.py\", line 22, in verify_payment_signature\n    return self.verify_signature(msg, razorpay_signature, secret)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\91991\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\razorpay\\utility\\utility.py\", line 76, in verify_signature\n    raise SignatureVerificationError(\nrazorpay.errors.SignatureVerificationError: Razorpay Signature Verification Failed\n"
+}
+2025-04-13 23:27:02 - INFO - views.py:158 - payment_callback - Payment callback received
+2025-04-13 23:27:02 - DEBUG - views.py:159 - payment_callback - POST data: <QueryDict: {'razorpay_payment_id': ['pay_test123'], 'razorpay_order_id': ['order_callback123'], 'razorpay_signature': ['valid_signature']}>
+2025-04-13 23:27:02 - INFO - views.py:167 - payment_callback - Payment callback: payment_id=pay_test123, order_id=order_callback123
+2025-04-13 23:27:02 - ERROR - logging.py:66 - log_payment_error - Payment error: {
+  "error_type": "signature_verification",
+  "error_message": "Razorpay Signature Verification Failed",
+  "timestamp": "2025-04-13T23:27:02.206148",
+  "transaction_id": null,
+  "additional_data": {
+    "payment_id": "pay_test123",
+    "order_id": "order_callback123"
+  },
+  "traceback": "Traceback (most recent call last):\n  File \"D:\\Django2.0\\School\\fees\\views.py\", line 191, in payment_callback\n    result = razorpay_client.utility.verify_payment_signature(params_dict)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\91991\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\razorpay\\utility\\utility.py\", line 22, in verify_payment_signature\n    return self.verify_signature(msg, razorpay_signature, secret)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\91991\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\razorpay\\utility\\utility.py\", line 76, in verify_signature\n    raise SignatureVerificationError(\nrazorpay.errors.SignatureVerificationError: Razorpay Signature Verification Failed\n"
+}
+2025-04-13 23:28:33 - INFO - views.py:57 - initiate_payment - Student detected: vaidik kotadiya (ID: 27)
+2025-04-13 23:28:44 - INFO - logging.py:21 - log_payment_attempt - Payment attempt initiated | Student ID: 27 | Amount: 25000.0 | User ID: Same as student
+2025-04-13 23:28:44 - INFO - views.py:114 - initiate_payment - Razorpay order created: order_QIdHmZp2oYJIJL for student 27
+2025-04-13 23:28:44 - DEBUG - views.py:115 - initiate_payment - Order details: {'amount': 2500000, 'amount_due': 2500000, 'amount_paid': 0, 'attempts': 0, 'created_at': 1744567125, 'currency': 'INR', 'entity': 'order', 'id': 'order_QIdHmZp2oYJIJL', 'notes': [], 'offer_id': None, 'receipt': 'receipt_2', 'status': 'created'}
+2025-04-13 23:29:09 - INFO - views.py:158 - payment_callback - Payment callback received
+2025-04-13 23:29:09 - DEBUG - views.py:159 - payment_callback - POST data: <QueryDict: {'csrfmiddlewaretoken': ['WjEUxnQCofuonfMQgdfMK15Cjc3SXki9KN8OJBnC9Rn1bHnVLzxp15DciQvsZHiF'], 'csrf_token': ['WjEUxnQCofuonfMQgdfMK15Cjc3SXki9KN8OJBnC9Rn1bHnVLzxp15DciQvsZHiF'], 'razorpay_payment_id': ['pay_QIdHzk5tyu4H5M'], 'razorpay_order_id': ['order_QIdHmZp2oYJIJL'], 'razorpay_signature': ['e584354dcd66a81055b2feb1f048872fa98f51e106b2caa5d32cbc70d6cbea52']}>
+2025-04-13 23:29:09 - INFO - views.py:167 - payment_callback - Payment callback: payment_id=pay_QIdHzk5tyu4H5M, order_id=order_QIdHmZp2oYJIJL
+2025-04-13 23:29:09 - INFO - views.py:192 - payment_callback - Signature verification result: True
+2025-04-13 23:29:09 - INFO - logging.py:36 - log_payment_success - Payment successful | Transaction ID: 2 | Payment ID: pay_QIdHzk5tyu4H5M | Order ID: order_QIdHmZp2oYJIJL | Amount: 25000.00
+2025-04-13 23:39:04 - INFO - views.py:57 - initiate_payment - Student detected: vaidik kotadiya (ID: 27)
+2025-04-13 23:39:29 - INFO - views.py:57 - initiate_payment - Student detected: vaidik kotadiya (ID: 27)
+2025-04-14 10:34:15 - INFO - views.py:57 - initiate_payment - Student detected: vaidik kotadiya (ID: 27)
+2025-04-14 10:41:04 - INFO - views.py:57 - initiate_payment - Student detected: vaidik kotadiya (ID: 27)
+2025-04-14 11:46:18 - INFO - views.py:57 - initiate_payment - Student detected: vaidik kotadiya (ID: 27)
+2025-04-14 13:34:21 - INFO - views.py:57 - initiate_payment - Student detected: vaidik kotadiya (ID: 27)
+2025-04-15 11:32:09 - INFO - views.py:57 - initiate_payment - Student detected: vaidik kotadiya (ID: 27)
+2025-04-15 11:32:13 - INFO - logging.py:21 - log_payment_attempt - Payment attempt initiated | Student ID: 27 | Amount: 10.0 | User ID: Same as student
+2025-04-15 11:32:13 - INFO - views.py:114 - initiate_payment - Razorpay order created: order_QJE98RIKhFuTrS for student 27
+2025-04-15 11:32:13 - DEBUG - views.py:115 - initiate_payment - Order details: {'amount': 1000, 'amount_due': 1000, 'amount_paid': 0, 'attempts': 0, 'created_at': 1744696933, 'currency': 'INR', 'entity': 'order', 'id': 'order_QJE98RIKhFuTrS', 'notes': [], 'offer_id': None, 'receipt': 'receipt_3', 'status': 'created'}
+2025-04-15 11:32:36 - INFO - views.py:158 - payment_callback - Payment callback received
+2025-04-15 11:32:36 - DEBUG - views.py:159 - payment_callback - POST data: <QueryDict: {'csrfmiddlewaretoken': ['fqCA16y0louQRLxaf5qSPifGffF3LAH2vj2e6cl9ICol226E228SOIK5xBoIZHIL'], 'csrf_token': ['fqCA16y0louQRLxaf5qSPifGffF3LAH2vj2e6cl9ICol226E228SOIK5xBoIZHIL'], 'razorpay_payment_id': ['pay_QJE9JUBTcM4IdM'], 'razorpay_order_id': ['order_QJE98RIKhFuTrS'], 'razorpay_signature': ['3e3e364e74ec75e458eb8af0d73d96644a70e2a045398e0a3f3073dcf0f1f85e']}>
+2025-04-15 11:32:36 - INFO - views.py:167 - payment_callback - Payment callback: payment_id=pay_QJE9JUBTcM4IdM, order_id=order_QJE98RIKhFuTrS
+2025-04-15 11:32:36 - INFO - views.py:192 - payment_callback - Signature verification result: True
+2025-04-15 11:32:36 - INFO - logging.py:36 - log_payment_success - Payment successful | Transaction ID: 3 | Payment ID: pay_QJE9JUBTcM4IdM | Order ID: order_QJE98RIKhFuTrS | Amount: 10.00
+2025-04-15 15:12:07 - INFO - views.py:57 - initiate_payment - Student detected: vaidik kotadiya (ID: 27)
+2025-04-15 15:12:11 - INFO - logging.py:21 - log_payment_attempt - Payment attempt initiated | Student ID: 27 | Amount: 5000.0 | User ID: Same as student
+2025-04-15 15:12:13 - INFO - views.py:114 - initiate_payment - Razorpay order created: order_QJHtXUKyXt6A8R for student 27
+2025-04-15 15:12:13 - DEBUG - views.py:115 - initiate_payment - Order details: {'amount': 500000, 'amount_due': 500000, 'amount_paid': 0, 'attempts': 0, 'created_at': 1744710134, 'currency': 'INR', 'entity': 'order', 'id': 'order_QJHtXUKyXt6A8R', 'notes': [], 'offer_id': None, 'receipt': 'receipt_4', 'status': 'created'}
+2025-04-15 15:23:09 - INFO - views.py:158 - payment_callback - Payment callback received
+2025-04-15 15:23:09 - DEBUG - views.py:159 - payment_callback - POST data: <QueryDict: {'csrfmiddlewaretoken': ['ja6b3ZoERJLyctPUjLBytGW34mM0In11Rc4z6Dy6dteZZuOG47TjxsQfdOmLL1lw'], 'csrf_token': ['ja6b3ZoERJLyctPUjLBytGW34mM0In11Rc4z6Dy6dteZZuOG47TjxsQfdOmLL1lw'], 'razorpay_payment_id': ['pay_QJI4r4ZmO8KKtB'], 'razorpay_order_id': ['order_QJHtXUKyXt6A8R'], 'razorpay_signature': ['e129d3c7cedf21fe7128eabd343c5d5dc5fe382aee7c528a4508c87a83867cfd']}>
+2025-04-15 15:23:09 - INFO - views.py:167 - payment_callback - Payment callback: payment_id=pay_QJI4r4ZmO8KKtB, order_id=order_QJHtXUKyXt6A8R
+2025-04-15 15:23:09 - INFO - views.py:192 - payment_callback - Signature verification result: True
+2025-04-15 15:23:09 - INFO - logging.py:36 - log_payment_success - Payment successful | Transaction ID: 4 | Payment ID: pay_QJI4r4ZmO8KKtB | Order ID: order_QJHtXUKyXt6A8R | Amount: 5000.00
+2025-04-15 15:24:32 - INFO - views.py:57 - initiate_payment - Student detected: vaidik kotadiya (ID: 27)
+2025-04-15 15:38:31 - INFO - logging.py:21 - log_payment_attempt - Payment attempt initiated | Student ID: 27 | Amount: 200.0 | User ID: Same as student
+2025-04-15 15:38:32 - INFO - views.py:114 - initiate_payment - Razorpay order created: order_QJILL8zuc01pZq for student 27
+2025-04-15 15:38:32 - DEBUG - views.py:115 - initiate_payment - Order details: {'amount': 20000, 'amount_due': 20000, 'amount_paid': 0, 'attempts': 0, 'created_at': 1744711713, 'currency': 'INR', 'entity': 'order', 'id': 'order_QJILL8zuc01pZq', 'notes': [], 'offer_id': None, 'receipt': 'receipt_5', 'status': 'created'}
+2025-04-15 15:39:00 - INFO - views.py:158 - payment_callback - Payment callback received
+2025-04-15 15:39:00 - DEBUG - views.py:159 - payment_callback - POST data: <QueryDict: {'csrfmiddlewaretoken': ['zUtcksWiLi1hqiYzfICU89QshnWR829s7WrAn66K72uIdjXl04UFcVKEqPwCbGtX'], 'csrf_token': ['zUtcksWiLi1hqiYzfICU89QshnWR829s7WrAn66K72uIdjXl04UFcVKEqPwCbGtX'], 'razorpay_payment_id': ['pay_QJILbMOlBdSJ2y'], 'razorpay_order_id': ['order_QJILL8zuc01pZq'], 'razorpay_signature': ['e0d35e2f0943d51c3bb5f635b7d8c2b4f91636424b2ce859318282ff863ffb42']}>
+2025-04-15 15:39:00 - INFO - views.py:167 - payment_callback - Payment callback: payment_id=pay_QJILbMOlBdSJ2y, order_id=order_QJILL8zuc01pZq
+2025-04-15 15:39:00 - INFO - views.py:192 - payment_callback - Signature verification result: True
+2025-04-15 15:39:00 - INFO - logging.py:36 - log_payment_success - Payment successful | Transaction ID: 5 | Payment ID: pay_QJILbMOlBdSJ2y | Order ID: order_QJILL8zuc01pZq | Amount: 200.00
+2025-04-16 10:13:06 - INFO - views.py:57 - initiate_payment - Student detected: vaidik kotadiya (ID: 27)
+2025-04-16 10:13:10 - INFO - logging.py:21 - log_payment_attempt - Payment attempt initiated | Student ID: 27 | Amount: 50.0 | User ID: Same as student
+2025-04-16 10:13:12 - INFO - views.py:114 - initiate_payment - Razorpay order created: order_QJbKn8noqVXHkO for student 27
+2025-04-16 10:13:12 - DEBUG - views.py:115 - initiate_payment - Order details: {'amount': 5000, 'amount_due': 5000, 'amount_paid': 0, 'attempts': 0, 'created_at': 1744778592, 'currency': 'INR', 'entity': 'order', 'id': 'order_QJbKn8noqVXHkO', 'notes': [], 'offer_id': None, 'receipt': 'receipt_6', 'status': 'created'}
+2025-04-16 10:13:44 - INFO - views.py:158 - payment_callback - Payment callback received
+2025-04-16 10:13:44 - DEBUG - views.py:159 - payment_callback - POST data: <QueryDict: {'csrfmiddlewaretoken': ['VXhuNnjsqcLb6yGaglu26Vn9D85xD1P2tZfSQ1tUMWeCTzFW1HMNaHhlMAFiGF9x'], 'csrf_token': ['VXhuNnjsqcLb6yGaglu26Vn9D85xD1P2tZfSQ1tUMWeCTzFW1HMNaHhlMAFiGF9x'], 'razorpay_payment_id': ['pay_QJbL4qyx74u8Hk'], 'razorpay_order_id': ['order_QJbKn8noqVXHkO'], 'razorpay_signature': ['e91920f76466d6fe1ad37c60ec35a0b4278db1daf09c5e226b7d4e56c1bea17c']}>
+2025-04-16 10:13:44 - INFO - views.py:167 - payment_callback - Payment callback: payment_id=pay_QJbL4qyx74u8Hk, order_id=order_QJbKn8noqVXHkO
+2025-04-16 10:13:44 - INFO - views.py:192 - payment_callback - Signature verification result: True
+2025-04-16 10:13:44 - INFO - logging.py:36 - log_payment_success - Payment successful | Transaction ID: 6 | Payment ID: pay_QJbL4qyx74u8Hk | Order ID: order_QJbKn8noqVXHkO | Amount: 50.00
+2025-04-19 17:57:56 - INFO - views.py:57 - initiate_payment - Student detected: vaidik kotadiya (ID: 27)
+2025-04-19 17:58:04 - INFO - logging.py:21 - log_payment_attempt - Payment attempt initiated | Student ID: 27 | Amount: 10.0 | User ID: Same as student
+2025-04-19 17:58:06 - INFO - views.py:114 - initiate_payment - Razorpay order created: order_QKurEk3EPCNjJg for student 27
+2025-04-19 17:58:06 - DEBUG - views.py:115 - initiate_payment - Order details: {'amount': 1000, 'amount_due': 1000, 'amount_paid': 0, 'attempts': 0, 'created_at': 1745065686, 'currency': 'INR', 'entity': 'order', 'id': 'order_QKurEk3EPCNjJg', 'notes': [], 'offer_id': None, 'receipt': 'receipt_7', 'status': 'created'}
+2025-04-19 17:58:29 - INFO - views.py:158 - payment_callback - Payment callback received
+2025-04-19 17:58:29 - DEBUG - views.py:159 - payment_callback - POST data: <QueryDict: {'csrfmiddlewaretoken': ['Rl9HrpHfjBJnGjd8jBHJHuD9OhoBGrbKRZ058BJmMU0MiWMuxPdb7fIWBq3gRFnb'], 'csrf_token': ['Rl9HrpHfjBJnGjd8jBHJHuD9OhoBGrbKRZ058BJmMU0MiWMuxPdb7fIWBq3gRFnb'], 'razorpay_payment_id': ['pay_QKurQOFdPTyyOP'], 'razorpay_order_id': ['order_QKurEk3EPCNjJg'], 'razorpay_signature': ['77a37669715a82f4674b5ab3a3a9c75936f77c0541e6d0972c53c389013a76d0']}>
+2025-04-19 17:58:29 - INFO - views.py:167 - payment_callback - Payment callback: payment_id=pay_QKurQOFdPTyyOP, order_id=order_QKurEk3EPCNjJg
+2025-04-19 17:58:29 - INFO - views.py:192 - payment_callback - Signature verification result: True
+2025-04-19 17:58:29 - INFO - logging.py:36 - log_payment_success - Payment successful | Transaction ID: 7 | Payment ID: pay_QKurQOFdPTyyOP | Order ID: order_QKurEk3EPCNjJg | Amount: 10.00
+2025-04-20 12:42:03 - INFO - views.py:57 - initiate_payment - Student detected: vaidik kotadiya (ID: 27)
+2025-04-20 12:42:34 - INFO - views.py:57 - initiate_payment - Student detected: vaidik kotadiya (ID: 27)
+2025-04-20 12:42:39 - INFO - logging.py:21 - log_payment_attempt - Payment attempt initiated | Student ID: 27 | Amount: 5.0 | User ID: Same as student
+2025-04-20 12:42:40 - INFO - views.py:114 - initiate_payment - Razorpay order created: order_QLE1ACgJIFWldW for student 27
+2025-04-20 12:42:40 - DEBUG - views.py:115 - initiate_payment - Order details: {'amount': 500, 'amount_due': 500, 'amount_paid': 0, 'attempts': 0, 'created_at': 1745133161, 'currency': 'INR', 'entity': 'order', 'id': 'order_QLE1ACgJIFWldW', 'notes': [], 'offer_id': None, 'receipt': 'receipt_8', 'status': 'created'}
+2025-04-20 12:43:06 - INFO - views.py:158 - payment_callback - Payment callback received
+2025-04-20 12:43:06 - DEBUG - views.py:159 - payment_callback - POST data: <QueryDict: {'csrfmiddlewaretoken': ['CVM1jSh1low63dMkAzsyRwLQ9yFpajxOCzDp04j8OHNvFQlGONY0hhQDWHk4lxJf'], 'csrf_token': ['CVM1jSh1low63dMkAzsyRwLQ9yFpajxOCzDp04j8OHNvFQlGONY0hhQDWHk4lxJf'], 'razorpay_payment_id': ['pay_QLE1OBb8JJVbr7'], 'razorpay_order_id': ['order_QLE1ACgJIFWldW'], 'razorpay_signature': ['2a3447a3dc3a84dd88a2353adfe58fb811bb25a62ab7c1e0c045464b298b5159']}>
+2025-04-20 12:43:06 - INFO - views.py:167 - payment_callback - Payment callback: payment_id=pay_QLE1OBb8JJVbr7, order_id=order_QLE1ACgJIFWldW
+2025-04-20 12:43:06 - INFO - views.py:192 - payment_callback - Signature verification result: True
+2025-04-20 12:43:06 - INFO - logging.py:36 - log_payment_success - Payment successful | Transaction ID: 8 | Payment ID: pay_QLE1OBb8JJVbr7 | Order ID: order_QLE1ACgJIFWldW | Amount: 5.00
+2025-04-22 14:46:05 - INFO - views.py:61 - initiate_payment - Student detected: vaidik kotadiya (ID: 27)
+2025-04-22 14:46:10 - INFO - logging.py:21 - log_payment_attempt - Payment attempt initiated | Student ID: 27 | Amount: 100.0 | User ID: Same as student
+2025-04-22 14:46:12 - INFO - views.py:118 - initiate_payment - Razorpay order created: order_QM3Bt0FVmcvq7O for student 27
+2025-04-22 14:46:12 - DEBUG - views.py:119 - initiate_payment - Order details: {'amount': 10000, 'amount_due': 10000, 'amount_paid': 0, 'attempts': 0, 'created_at': 1745313372, 'currency': 'INR', 'entity': 'order', 'id': 'order_QM3Bt0FVmcvq7O', 'notes': [], 'offer_id': None, 'receipt': 'receipt_9', 'status': 'created'}
+2025-04-22 14:46:36 - INFO - views.py:162 - payment_callback - Payment callback received
+2025-04-22 14:46:36 - DEBUG - views.py:163 - payment_callback - POST data: <QueryDict: {'csrfmiddlewaretoken': ['80LPgjZ0MCU5mq13dBy1m216qRJRKQbU8ECdXv17fVbuY3AprP4tMN6Td0owV4nl'], 'csrf_token': ['80LPgjZ0MCU5mq13dBy1m216qRJRKQbU8ECdXv17fVbuY3AprP4tMN6Td0owV4nl'], 'razorpay_payment_id': ['pay_QM3C5cQbRXnvBb'], 'razorpay_order_id': ['order_QM3Bt0FVmcvq7O'], 'razorpay_signature': ['2281083482efcc5e2d361350fc2a3229c14c09f46153ccb2b96cf868cdd5bd14']}>
+2025-04-22 14:46:36 - INFO - views.py:171 - payment_callback - Payment callback: payment_id=pay_QM3C5cQbRXnvBb, order_id=order_QM3Bt0FVmcvq7O
+2025-04-22 14:46:36 - INFO - views.py:196 - payment_callback - Signature verification result: True
+2025-04-22 14:46:36 - INFO - logging.py:36 - log_payment_success - Payment successful | Transaction ID: 9 | Payment ID: pay_QM3C5cQbRXnvBb | Order ID: order_QM3Bt0FVmcvq7O | Amount: 100.00

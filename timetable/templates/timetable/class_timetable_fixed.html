@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load timetable_extras %}
+
+{% block title %}Class Timetable{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3 class="page-title">Class Timetable</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'core:home' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'timetable:timetable_list' %}">Timetable</a></li>
+                    <li class="breadcrumb-item active">Class Timetable</li>
+                </ul>
+            </div>
+            <div class="col-auto text-end float-end ms-auto">
+                <a href="{% url 'timetable:timetable_create' %}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Add Timetable Entry
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Class Selection -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <form method="get" class="form-inline">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <select name="class" class="form-control" onchange="this.form.submit()">
+                                    <option value="">Select Class</option>
+                                    {% for class_id, class_name in classes.items %}
+                                    <option value="{{ class_id }}" {% if
+                                        selected_class|stringformat:"s"==class_id|stringformat:"s" %}selected{% endif
+                                        %}>
+                                        {{ class_name }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if selected_class %}
+    <!-- Timetable Display -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Period</th>
+                                    {% for day_id, day_name in days.items %}
+                                    <th>{{ day_name }}</th>
+                                    {% endfor %}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for period_id, period_name in periods.items %}
+                                <tr>
+                                    <th>{{ period_name }}</th>
+                                    {% for day_id, day_name in days.items %}
+                                    <td>
+                                        {% with
+                                        entry=timetable_by_class|get_dict_value:selected_class|get_dict_value:day_id|get_dict_value:period_id
+                                        %}
+                                        {% if entry %}
+                                        <div>
+                                            <strong>{{ entry.subject.name }}</strong><br>
+                                            {{ entry.teacher.first_name }} {{ entry.teacher.last_name }}<br>
+                                            Room: {{ entry.room_number }}<br>
+                                            {{ entry.start_time|time:"H:i" }} - {{ entry.end_time|time:"H:i" }}
+                                            <div class="mt-2">
+                                                <a href="{% url 'timetable:timetable_edit' entry.id %}"
+                                                    class="btn btn-sm bg-success-light me-2" title="Edit">
+                                                    <i class="fas fa-pen"></i>
+                                                </a>
+                                                <a href="{% url 'timetable:timetable_delete' entry.id %}"
+                                                    class="btn btn-sm bg-danger-light" title="Delete">
+                                                    <i class="fas fa-trash"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                        {% else %}
+                                        <a href="{% url 'timetable:timetable_create' %}?class={{ selected_class }}&day={{ day_id }}&period={{ period_id }}"
+                                            class="btn btn-sm btn-outline-primary" title="Add Entry">
+                                            <i class="fas fa-plus"></i> Add
+                                        </a>
+                                        {% endif %}
+                                        {% endwith %}
+                                    </td>
+                                    {% endfor %}
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h4>Please select a class to view its timetable</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

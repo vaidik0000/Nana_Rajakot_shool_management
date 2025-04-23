@@ -1,0 +1,630 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Student Marks - School Management System{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Improved styles for filter section */
+    .filter-section {
+        padding: 15px;
+        margin-bottom: 20px;
+        border-bottom: 1px solid #e9ecef;
+    }
+
+    .filter-section-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: #495057;
+        margin-bottom: 15px;
+    }
+
+    /* Form styling */
+    .filter-form .form-control {
+        height: 40px;
+        border-radius: 4px;
+        border: 1px solid #ced4da;
+        font-size: 14px;
+    }
+
+    .filter-form .form-control:focus {
+        border-color: #4299e1;
+        box-shadow: 0 0 0 0.2rem rgba(66, 153, 225, 0.25);
+    }
+
+    .filter-form select.form-control {
+        padding-right: 30px;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23495057' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 10px center;
+        background-size: 16px;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+    }
+
+    .filter-form label {
+        font-weight: 500;
+        font-size: 13px;
+        color: #495057;
+        margin-bottom: 5px;
+    }
+
+    .filter-form .btn {
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 500;
+    }
+
+    .filter-form .btn i {
+        margin-right: 5px;
+    }
+
+    .btn-primary {
+        background-color: #4299e1;
+        border-color: #4299e1;
+    }
+
+    .btn-primary:hover {
+        background-color: #3182ce;
+        border-color: #3182ce;
+    }
+
+    .btn-secondary {
+        background-color: #718096;
+        border-color: #718096;
+    }
+
+    .btn-secondary:hover {
+        background-color: #4a5568;
+        border-color: #4a5568;
+    }
+
+    /* Client-side filter */
+    .client-filter-form {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 15px;
+        margin-top: 15px;
+        margin-bottom: 15px;
+        border: 1px solid #e9ecef;
+    }
+
+    .client-filter-title {
+        font-size: 14px;
+        font-weight: 600;
+        color: #495057;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+    }
+
+    .client-filter-title i {
+        margin-right: 8px;
+        color: #6c757d;
+    }
+
+    /* Search box */
+    .search-box {
+        position: relative;
+        margin-bottom: 0;
+    }
+
+    .search-box .input-group {
+        border-radius: 4px;
+        border: 1px solid #ced4da;
+        transition: all 0.3s ease;
+        background-color: white;
+        height: 40px;
+    }
+
+    #searchInput {
+        border: none;
+        height: 100%;
+        font-size: 14px;
+    }
+
+    #searchInput:focus {
+        box-shadow: none;
+        outline: none;
+    }
+
+    .input-group-text {
+        background-color: transparent;
+        border: none;
+        color: #6c757d;
+    }
+
+    /* Table styles */
+    .table thead th {
+        background-color: #f8f9fa;
+        color: #495057;
+        font-weight: 600;
+        border-top: none;
+        border-bottom: 2px solid #e9ecef;
+        padding: 12px 15px;
+    }
+
+    /* Badge styling */
+    .badge {
+        padding: 6px 10px;
+        border-radius: 30px;
+        font-weight: 500;
+        font-size: 12px;
+    }
+
+    .badge-success {
+        background-color: #48bb78;
+        color: white;
+    }
+
+    .badge-info {
+        background-color: #4299e1;
+        color: white;
+    }
+
+    .badge-warning {
+        background-color: #ecc94b;
+        color: #744210;
+    }
+
+    .badge-danger {
+        background-color: #f56565;
+        color: white;
+    }
+
+    /* Filter buttons */
+    .filter-buttons {
+        display: flex;
+        gap: 10px;
+        margin-top: 15px;
+    }
+
+    .filter-btn {
+        padding: 8px 15px;
+        border-radius: 4px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .filter-btn i {
+        margin-right: 5px;
+    }
+
+    .filter-btn.reset {
+        background-color: #f8f9fa;
+        border: 1px solid #ced4da;
+        color: #495057;
+    }
+
+    .filter-btn.reset:hover {
+        background-color: #e9ecef;
+    }
+</style>
+{% endblock %}
+{% block content %}
+<div class="page-header">
+    <div class="row align-items-center">
+        <div class="col">
+            <h3 class="page-title">Student Marks</h3>
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'core:home' %}">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'subjects:subject_list' %}">Subjects</a></li>
+                <li class="breadcrumb-item active">Student Marks</li>
+            </ul>
+        </div>
+        {% if not is_student %}
+        <div class="col-auto">
+            <a href="{% url 'subjects:add_student_mark' %}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Add Student Mark
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="card">
+            <div class="card-body">
+                {% if is_student %}
+                <div class="alert alert-info">
+                    <h5>Your Marks</h5>
+                    <p>Below are your academic marks. If you have any questions, please contact your teacher.</p>
+                </div>
+                {% else %}
+                <!-- Server-side Filter Section -->
+                <!-- <div class="filter-section">
+                    <div class="filter-section-title">
+                        <i class="fas fa-filter"></i> Filter Student Marks
+                    </div>
+                    <form action="{% url 'subjects:student_marks' %}" method="get" class="filter-form">
+                        <div class="row">
+                            <div class="col-md-3 mb-3">
+                                <label for="class_name">Class</label>
+                                <select name="class_name" id="class_name" class="form-control">
+                                    <option value="">All Classes</option>
+                                    {% for class_choice in class_choices %}
+                                    <option value="{{ class_choice.0 }}" {% if request.GET.class_name == class_choice.0 %}selected{% endif %}>
+                                        {{ class_choice.1 }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label for="subject">Subject</label>
+                                <select name="subject" id="subject" class="form-control">
+                                    <option value="">All Subjects</option>
+                                    {% for subject in subjects %}
+                                    <option value="{{ subject.id }}" {% if request.GET.subject == subject.id|stringformat:"s" %}selected{% endif %}>
+                                        {{ subject.name }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-2 mb-3">
+                                <label for="date_from">Date From</label>
+                                <input type="date" name="date_from" id="date_from" class="form-control"
+                                    value="{{ request.GET.date_from|default:'' }}">
+                            </div>
+                            <div class="col-md-2 mb-3">
+                                <label for="date_to">Date To</label>
+                                <input type="date" name="date_to" id="date_to" class="form-control"
+                                    value="{{ request.GET.date_to|default:'' }}">
+                            </div>
+                            <div class="col-md-2 mb-3">
+                                <label for="min_grade">Minimum Grade</label>
+                                <select name="min_grade" id="min_grade" class="form-control">
+                                    <option value="">Any Grade</option>
+                                    <option value="A+" {% if request.GET.min_grade == 'A+' %}selected{% endif %}>A+
+                                    </option>
+                                    <option value="A" {% if request.GET.min_grade == 'A' %}selected{% endif %}>A</option>
+                                    <option value="B" {% if request.GET.min_grade == 'B' %}selected{% endif %}>B</option>
+                                    <option value="C" {% if request.GET.min_grade == 'C' %}selected{% endif %}>C</option>
+                                    <option value="D" {% if request.GET.min_grade == 'D' %}selected{% endif %}>D</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="search-box mb-3">
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="fas fa-search"></i>
+                                        </span>
+                                        <input type="text" name="search" id="serverSearchInput" class="form-control"
+                                            placeholder="Search by student name..."
+                                            value="{{ request.GET.search|default:'' }}">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 d-flex align-items-end">
+                                <button type="submit" class="btn btn-primary me-2 flex-grow-1">
+                                    <i class="fas fa-filter"></i> Apply Filters
+                                </button>
+                                <a href="{% url 'subjects:student_marks' %}" class="btn btn-secondary flex-grow-1">
+                                    <i class="fas fa-redo"></i> Reset
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+                </div> -->
+
+                <!-- Client-side quick filter -->
+                <div class="client-filter-form">
+                    <div class="client-filter-title">
+                        <i class="fas fa-search"></i> Quick Filter (Current Page)
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-2">
+                            <div class="search-box">
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="fas fa-search"></i>
+                                    </span>
+                                    <input type="text" id="searchInput" class="form-control"
+                                        placeholder="Filter current page...">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <select id="subjectFilter" class="form-control">
+                                <option value="">All Subjects</option>
+                                {% for mark in student_marks %}
+                                <option value="{{ mark.subject.name }}">{{ mark.subject.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <select id="gradeFilter" class="form-control">
+                                <option value="">All Grades</option>
+                                <option value="A+">A+</option>
+                                <option value="A">A</option>
+                                <option value="B">B</option>
+                                <option value="C">C</option>
+                                <option value="D">D</option>
+                                <option value="F">F</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="filter-buttons">
+                        <div class="filter-btn reset" id="resetFilters">
+                            <i class="fas fa-times"></i> Clear Quick Filter
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>Student</th>
+                                <th>Subject</th>
+                                <th>Teacher</th>
+                                <th>Marks</th>
+                                <th>Total Marks</th>
+                                <th>Percentage</th>
+                                <th>Grade</th>
+                                <th>Date</th>
+                                {% if not is_student %}
+                                <th>Actions</th>
+                                {% endif %}
+                            </tr>
+                        </thead>
+                        <tbody id="marksTableBody">
+                            {% for mark in student_marks %}
+                            <tr>
+                                <td>
+                                    {% if mark.student %}
+                                    <a href="{% url 'students:student_detail' mark.student.id %}">
+                                        {{ mark.student.first_name }} {{ mark.student.last_name }}
+                                    </a>
+                                    {% else %}
+                                    <span class="text-muted">Student not found</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ mark.subject.name }}</td>
+                                <td>
+                                    {% if mark.teacher %}
+                                    {{ mark.teacher.first_name }} {{ mark.teacher.last_name }}
+                                    {% else %}
+                                    <span class="text-muted">Not assigned</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ mark.marks_obtained }}</td>
+                                <td>{{ mark.total_marks }}</td>
+                                <td>{{ mark.percentage }}%</td>
+                                <td>
+                                    <span
+                                        class="badge {% if mark.grade == 'A+' %}badge-success{% elif mark.grade == 'A' %}badge-success{% elif mark.grade == 'B' %}badge-info{% elif mark.grade == 'C' %}badge-warning{% elif mark.grade == 'D' %}badge-warning{% else %}badge-danger{% endif %}">
+                                        {{ mark.grade }}
+                                    </span>
+                                </td>
+                                <td>{{ mark.date|date:"d M, Y" }}</td>
+                                {% if not is_student %}
+                                <td>
+                                    <div class="actions">
+                                        <a href="{% url 'subjects:edit_student_mark' mark.id %}"
+                                            class="btn btn-sm bg-success-light me-2" title="Edit">
+                                            <i class="fas fa-pen"></i>
+                                        </a>
+                                        <a href="{% url 'subjects:delete_student_mark' mark.id %}"
+                                            class="btn btn-sm bg-danger-light" title="Delete"
+                                            onclick="return confirm('Are you sure you want to delete this mark record?')">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                                {% endif %}
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="{% if is_student %}8{% else %}9{% endif %}" class="text-center">No student
+                                    marks found.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div id="noResultsMessage" class="alert alert-info mt-3" style="display: none;">
+                    <p>No marks found matching your filter criteria. Try adjusting your filters or clear them to see all
+                        records.</p>
+                </div>
+
+                {% if student_marks.has_other_pages %}
+                <div class="pagination-container mt-4">
+                    <ul class="pagination justify-content-center">
+                        {% if student_marks.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link"
+                                href="?page=1{% if request.GET.class_name %}&class_name={{ request.GET.class_name }}{% endif %}{% if request.GET.subject %}&subject={{ request.GET.subject }}{% endif %}{% if request.GET.date_from %}&date_from={{ request.GET.date_from }}{% endif %}{% if request.GET.date_to %}&date_to={{ request.GET.date_to }}{% endif %}{% if request.GET.min_grade %}&min_grade={{ request.GET.min_grade }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">
+                                <i class="fas fa-angle-double-left"></i>
+                            </a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link"
+                                href="?page={{ student_marks.previous_page_number }}{% if request.GET.class_name %}&class_name={{ request.GET.class_name }}{% endif %}{% if request.GET.subject %}&subject={{ request.GET.subject }}{% endif %}{% if request.GET.date_from %}&date_from={{ request.GET.date_from }}{% endif %}{% if request.GET.date_to %}&date_to={{ request.GET.date_to }}{% endif %}{% if request.GET.min_grade %}&min_grade={{ request.GET.min_grade }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">
+                                <i class="fas fa-angle-left"></i>
+                            </a>
+                        </li>
+                        {% else %}
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#"><i class="fas fa-angle-double-left"></i></a>
+                        </li>
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#"><i class="fas fa-angle-left"></i></a>
+                        </li>
+                        {% endif %}
+
+                        {% for num in student_marks.paginator.page_range %}
+                        {% if student_marks.number == num %}
+                        <li class="page-item active"><a class="page-link" href="#">{{ num }}</a></li>
+                        {% elif num > student_marks.number|add:'-3' and num < student_marks.number|add:'3' %} <li
+                            class="page-item">
+                            <a class="page-link"
+                                href="?page={{ num }}{% if request.GET.class_name %}&class_name={{ request.GET.class_name }}{% endif %}{% if request.GET.subject %}&subject={{ request.GET.subject }}{% endif %}{% if request.GET.date_from %}&date_from={{ request.GET.date_from }}{% endif %}{% if request.GET.date_to %}&date_to={{ request.GET.date_to }}{% endif %}{% if request.GET.min_grade %}&min_grade={{ request.GET.min_grade }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">
+                                {{ num }}
+                            </a>
+                            </li>
+                            {% endif %}
+                            {% endfor %}
+
+                            {% if student_marks.has_next %}
+                            <li class="page-item">
+                                <a class="page-link"
+                                    href="?page={{ student_marks.next_page_number }}{% if request.GET.class_name %}&class_name={{ request.GET.class_name }}{% endif %}{% if request.GET.subject %}&subject={{ request.GET.subject }}{% endif %}{% if request.GET.date_from %}&date_from={{ request.GET.date_from }}{% endif %}{% if request.GET.date_to %}&date_to={{ request.GET.date_to }}{% endif %}{% if request.GET.min_grade %}&min_grade={{ request.GET.min_grade }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">
+                                    <i class="fas fa-angle-right"></i>
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link"
+                                    href="?page={{ student_marks.paginator.num_pages }}{% if request.GET.class_name %}&class_name={{ request.GET.class_name }}{% endif %}{% if request.GET.subject %}&subject={{ request.GET.subject }}{% endif %}{% if request.GET.date_from %}&date_from={{ request.GET.date_from }}{% endif %}{% if request.GET.date_to %}&date_to={{ request.GET.date_to }}{% endif %}{% if request.GET.min_grade %}&min_grade={{ request.GET.min_grade }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">
+                                    <i class="fas fa-angle-double-right"></i>
+                                </a>
+                            </li>
+                            {% else %}
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#"><i class="fas fa-angle-right"></i></a>
+                            </li>
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#"><i class="fas fa-angle-double-right"></i></a>
+                            </li>
+                            {% endif %}
+                    </ul>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Get DOM elements
+        const searchInput = document.getElementById('searchInput');
+        const subjectFilter = document.getElementById('subjectFilter');
+        const gradeFilter = document.getElementById('gradeFilter');
+        const marksTableBody = document.getElementById('marksTableBody');
+        const noResultsMessage = document.getElementById('noResultsMessage');
+        const resetFiltersBtn = document.getElementById('resetFilters');
+
+        // Create a Set to store unique subject values
+        const uniqueSubjects = new Set();
+
+        // Get all table rows
+        const tableRows = marksTableBody.querySelectorAll('tr');
+
+        // Build the subject dropdown with unique values
+        tableRows.forEach(row => {
+            const subjectCell = row.cells[1];
+            if (subjectCell) {
+                const subjectName = subjectCell.textContent.trim();
+                if (subjectName && !uniqueSubjects.has(subjectName)) {
+                    uniqueSubjects.add(subjectName);
+                }
+            }
+        });
+
+        // Clear existing options and add unique subjects
+        while (subjectFilter.options.length > 1) {
+            subjectFilter.remove(1);
+        }
+
+        uniqueSubjects.forEach(subject => {
+            const option = document.createElement('option');
+            option.value = subject;
+            option.textContent = subject;
+            subjectFilter.appendChild(option);
+        });
+
+        // Filter function
+        function filterMarks() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const subjectValue = subjectFilter.value.toLowerCase();
+            const gradeValue = gradeFilter.value;
+
+            let visibleCount = 0;
+
+            tableRows.forEach(row => {
+                // Skip the "no results" row
+                if (row.cells.length === 1 && row.cells[0].classList.contains('text-center')) {
+                    row.style.display = 'none';
+                    return;
+                }
+
+                const studentName = row.cells[0].textContent.toLowerCase();
+                const subject = row.cells[1].textContent.toLowerCase();
+                const teacher = row.cells[2].textContent.toLowerCase();
+
+                // Get the grade (text inside the span)
+                const gradeSpan = row.cells[6].querySelector('span');
+                const grade = gradeSpan ? gradeSpan.textContent.trim() : '';
+
+                const matchesSearch = searchTerm === '' ||
+                    studentName.includes(searchTerm) ||
+                    subject.includes(searchTerm) ||
+                    teacher.includes(searchTerm);
+
+                const matchesSubject = subjectValue === '' || subject === subjectValue;
+                const matchesGrade = gradeValue === '' || grade === gradeValue;
+
+                if (matchesSearch && matchesSubject && matchesGrade) {
+                    row.style.display = '';
+                    visibleCount++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+
+            // Show/hide the "no results" message
+            if (visibleCount === 0) {
+                noResultsMessage.style.display = 'block';
+            } else {
+                noResultsMessage.style.display = 'none';
+            }
+        }
+
+        // Reset filters function
+        function resetFilters() {
+            searchInput.value = '';
+            subjectFilter.selectedIndex = 0;
+            gradeFilter.selectedIndex = 0;
+
+            // Show all rows
+            tableRows.forEach(row => {
+                row.style.display = '';
+            });
+
+            // Hide no results message
+            noResultsMessage.style.display = 'none';
+        }
+
+        // Add event listeners
+        if (searchInput) {
+            searchInput.addEventListener('input', filterMarks);
+        }
+
+        if (subjectFilter) {
+            subjectFilter.addEventListener('change', filterMarks);
+        }
+
+        if (gradeFilter) {
+            gradeFilter.addEventListener('change', filterMarks);
+        }
+
+        if (resetFiltersBtn) {
+            resetFiltersBtn.addEventListener('click', resetFilters);
+        }
+    });
+</script>
+{% endblock %}

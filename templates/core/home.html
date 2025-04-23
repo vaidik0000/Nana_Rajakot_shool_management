@@ -1,0 +1,1017 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load core_extras %}
+
+{% block title %}Dashboard - School Management System{% endblock %}
+
+{% block extra_css %}
+<style>
+    .quick-action-btn {
+        padding: 15px;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+        margin-bottom: 15px;
+        background-color: #f8f9fa;
+        border-left: 5px solid #2B579A;
+    }
+
+    .quick-action-btn:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .admin-section {
+        display: none;
+    }
+
+    .stats-icon {
+        width: 50px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        font-size: 24px;
+        margin-right: 15px;
+    }
+
+    .activity-timeline {
+        position: relative;
+    }
+
+    .activity-timeline::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 20px;
+        width: 2px;
+        background-color: #e9ecef;
+    }
+
+    .activity-item {
+        position: relative;
+        padding-left: 45px;
+        margin-bottom: 20px;
+    }
+
+    .activity-item::before {
+        content: '';
+        position: absolute;
+        left: 12px;
+        top: 5px;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background-color: #fff;
+        border: 2px solid #6c757d;
+    }
+
+    .activity-item.success::before {
+        border-color: #28a745;
+    }
+
+    .activity-item.danger::before {
+        border-color: #dc3545;
+    }
+
+    .activity-item.warning::before {
+        border-color: #ffc107;
+    }
+
+    .activity-item.info::before {
+        border-color: #17a2b8;
+    }
+
+    .system-status {
+        padding: 10px 15px;
+        margin-bottom: 10px;
+        border-radius: 5px;
+        display: flex;
+        align-items: center;
+    }
+
+    .system-status i {
+        margin-right: 10px;
+    }
+
+    .system-status.active {
+        background-color: rgba(40, 167, 69, 0.1);
+        color: #28a745;
+    }
+
+    .system-status.inactive {
+        background-color: rgba(220, 53, 69, 0.1);
+        color: #dc3545;
+    }
+
+    .system-status.warning {
+        background-color: rgba(255, 193, 7, 0.1);
+        color: #ffc107;
+    }
+
+    /* Enhanced Attendance Chart Styles */
+    .attendance-chart-card {
+        background-color: #faf8f5;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+        margin-bottom: 30px;
+        transition: all 0.3s ease;
+        border: 1px solid rgba(0, 0, 0, 0.03);
+    }
+
+    .attendance-chart-card:hover {
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+        transform: translateY(-3px);
+    }
+
+    .attendance-chart-header {
+        padding: 22px 25px;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        background: linear-gradient(to right, #f9f9f9, #ffffff);
+    }
+
+    .attendance-chart-header h2 {
+        font-size: 24px;
+        font-weight: 700;
+        margin-bottom: 0;
+        color: #444;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        position: relative;
+        display: inline-block;
+    }
+
+    .attendance-chart-header h2:after {
+        content: '';
+        display: block;
+        height: 3px;
+        width: 40%;
+        background: linear-gradient(to right, #6f42c1, #8c68d4);
+        position: absolute;
+        bottom: -4px;
+        left: 0;
+        border-radius: 2px;
+    }
+
+    .attendance-chart-body {
+        padding: 25px 25px;
+        position: relative;
+        background-color: #ffffff;
+    }
+
+    .attendance-filters {
+        display: flex;
+        align-items: center;
+        margin-bottom: 25px;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .attendance-filters select,
+    .attendance-filters input[type="date"],
+    .attendance-filters button {
+        border-radius: 8px;
+        padding: 9px 16px;
+        border: 1px solid #e0e0e0;
+        background-color: #ffffff;
+        font-size: 14px;
+        transition: all 0.2s ease;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+    }
+
+    .attendance-filters select:focus,
+    .attendance-filters input[type="date"]:focus {
+        border-color: #6f42c1;
+        box-shadow: 0 0 0 3px rgba(111, 66, 193, 0.15);
+        outline: none;
+    }
+
+    .attendance-filters input[type="date"] {
+        padding: 8px 10px;
+    }
+
+    .attendance-filters button {
+        background: linear-gradient(135deg, #6f42c1, #5a32a3);
+        color: white;
+        border: none;
+        transition: all 0.3s ease;
+        font-weight: 500;
+        letter-spacing: 0.3px;
+        box-shadow: 0 3px 6px rgba(111, 66, 193, 0.25);
+    }
+
+    .attendance-filters button:hover {
+        background: linear-gradient(135deg, #5a32a3, #4a278a);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(111, 66, 193, 0.3);
+    }
+
+    .attendance-filters button:active {
+        transform: translateY(1px);
+    }
+
+    .attendance-filters button:disabled {
+        background: linear-gradient(135deg, #b392f0, #9f79e4);
+        cursor: not-allowed;
+        box-shadow: none;
+    }
+
+    .view-selector {
+        position: relative;
+    }
+
+    .view-selector select {
+        appearance: none;
+        -webkit-appearance: none;
+        padding-right: 30px;
+        cursor: pointer;
+    }
+
+    .view-selector:after {
+        content: '\f107';
+        font-family: 'Font Awesome 5 Free';
+        font-weight: 900;
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        pointer-events: none;
+        color: #6f42c1;
+    }
+
+    .date-range-selector {
+        display: flex;
+        align-items: center;
+        background-color: #ffffff;
+        border-radius: 10px;
+        padding: 3px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+        border: 1px solid #f0f0f0;
+    }
+
+    .attendance-tooltip {
+        position: absolute;
+        background-color: rgba(255, 255, 255, 0.98);
+        padding: 12px 18px;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
+        pointer-events: none;
+        z-index: 100;
+        display: none;
+        border: 1px solid rgba(111, 66, 193, 0.1);
+        font-size: 13px;
+        color: #333;
+        max-width: 250px;
+    }
+
+    .flex-responsive {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      @media (min-width: 768px) {
+        .flex-responsive {
+          flex-direction: row;
+        }
+      }
+
+    
+  
+
+    .chart-container {
+        height: 380px;
+        position: relative;
+        transition: all 0.4s ease;
+    }
+
+    #printAttendanceChart {
+        background-color: #6c757d;
+        box-shadow: 0 3px 6px rgba(108, 117, 125, 0.25);
+        transition: all 0.3s ease;
+    }
+
+    #printAttendanceChart:hover {
+        background-color: #5a6268;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(108, 117, 125, 0.3);
+    }
+
+    #printAttendanceChart:active {
+        transform: translateY(1px);
+    }
+
+    @media (max-width: 768px) {
+        .attendance-filters {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .view-selector,
+        .date-range-selector {
+            width: 100%;
+        }
+
+        .date-range-selector {
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: space-between;
+            flex-direction: column;
+        }
+
+        .chart-container {
+            height: 320px;
+        }
+
+        @media (max-width: 767px) {
+            .view-selector::after {
+              display: none !important;
+            }
+          }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+{% if user.is_superuser or user.is_staff %}
+<!-- Admin Dashboard Section -->
+<div class="row">
+    <div class="col-12 mb-4">
+        <div class="card bg-primary text-white"
+            style="background: linear-gradient(45deg, #6f42c1, #6610f2) !important; border: none;">
+            <div class="card-body p-4">
+                <div class="flex-responsive">
+                    <div class="flex-shrink-0 me-3">
+                        {% if request.user.is_superuser or request.user.is_staff %}
+                            {% if request.user.profile.picture %}
+                                <img src="{{ request.user.profile.picture.url }}" alt="Admin Profile"
+                                    class="rounded-circle" width="80" height="80">
+                            {% else %}
+                                <div class="rounded-circle bg-white text-primary d-flex align-items-center justify-content-center"
+                                    style="width: 80px; height: 80px;">
+                                    <i class="fas fa-user-shield fa-2x"></i>
+                                </div>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                    <div class="flex-grow-1">
+                        <h3 class="mb-2">Welcome, {{ request.user.get_full_name|default:request.user.username }}!</h3>
+                        <p class="mb-0 opacity-75">Administrator</p>
+                    </div>
+                    <div class="flex-shrink-0">
+                        <span class="badge bg-white text-primary" style="font-size: 0.9rem; padding: 8px 15px;">
+                            <i class="fas fa-star me-1"></i>Admin Dashboard
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xl-3 col-sm-6 col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="stats-icon bg-primary-light text-primary">
+                        <i class="fas fa-user-graduate"></i>
+                    </div>
+                    <div>
+                        <h5 class="card-title">Students</h5>
+                        <h3 class="mb-0">{{ student_count }}</h3>
+                        <p class="text-muted mb-0">Active: {{ student_count }}</p>
+                    </div>
+                </div>
+                <a href="{% url 'students:student_list' %}" class="btn btn-sm btn-outline-primary mt-3">View All</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-sm-6 col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="stats-icon bg-success-light text-success">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                    </div>
+                    <div>
+                        <h5 class="card-title">Teachers</h5>
+                        <h3 class="mb-0">{{ teacher_count }}</h3>
+                        <p class="text-muted mb-0">Active: {{ teacher_count }}</p>
+                    </div>
+                </div>
+                <a href="{% url 'school_teachers:teacher_list' %}" class="btn btn-sm btn-outline-success mt-3">View
+                    All</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-sm-6 col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="stats-icon bg-warning-light text-warning">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <div>
+                        <h5 class="card-title">Subjects</h5>
+                        <h3 class="mb-0">{{ subject_count }}</h3>
+                        <p class="text-muted mb-0">Active: {{ subject_count }}</p>
+                    </div>
+                </div>
+                <a href="{% url 'subjects:subject_list' %}" class="btn btn-sm btn-outline-warning mt-3">View All</a>
+            </div>
+        </div>
+    </div>
+    {% comment %} <div class="col-xl-3 col-sm-6 col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="stats-icon bg-danger-light text-danger">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <div>
+                        <h5 class="card-title">Revenue</h5>
+                        <h3 class="mb-0">₹{{ total_revenue|default:"0.00"|floatformat:2 }}</h3>
+                        <p class="text-muted mb-0">Total Fee Collection</p>
+                    </div>
+                </div>
+                <a href="{% url 'fees:fee_payment_list' %}" class="btn btn-sm btn-outline-danger mt-3">View All</a>
+            </div>
+        </div>
+    </div> {% endcomment %}
+</div>
+
+<!-- Attendance Chart Section (Admin Only) -->
+<div class="row">
+    <div class="col-12">
+        <div class="attendance-chart-card">
+            <div class="attendance-chart-header">
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-center">
+                    <h2 class="mb-4 ">ATTENDANCE</h2>
+                    <div class="attendance-filters">
+                        <div class="view-selector me-3">
+                            <select id="chartViewSelector" class="form-select">
+                                <option value="all">All Data</option>
+                                <option value="students">Students Only</option>
+                                <option value="teachers">Teachers Only</option>
+                                <option value="present">Present Only</option>
+                                <option value="absent">Absent Only</option>
+                            </select>
+                        </div>
+                        <div class="date-range-selector d-flex align-items-center">
+                            <input type="date" id="startDate" class="form-control me-1" style="max-width: 150px;"
+                                value="{{ attendance_chart_data.start_date }}">
+                                <span class="px-1 d-none d-md-inline">to</span>
+
+                            <input type="date" id="endDate" class="form-control me-2" style="max-width: 150px;"
+                                value="{{ attendance_chart_data.end_date }}">
+                            <button type="button" id="updateDateRange" class="btn btn-sm btn-primary">Apply</button>
+                        </div>
+                        <button id="printAttendanceChart" class="btn btn-sm btn-primary ms-2">
+                            <i class="fas fa-print"></i> Generate PDF
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="attendance-chart-body">
+                <div class="chart-container">
+                    <canvas id="attendanceChart"></canvas>
+                    <div id="tooltip" class="attendance-tooltip"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">Quick Actions</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <a href="{% url 'students:student_create' %}"
+                            class="quick-action-btn d-block text-decoration-none">
+                            <div class="d-flex align-items-center">
+                                <div class="icon bg-primary-light text-primary me-3 p-2 rounded">
+                                    <i class="fas fa-user-plus"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-0">Add New Student</h6>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-6">
+                        <a href="{% url 'school_teachers:teacher_create' %}"
+                            class="quick-action-btn d-block text-decoration-none">
+                            <div class="d-flex align-items-center">
+                                <div class="icon bg-success-light text-success me-3 p-2 rounded">
+                                    <i class="fas fa-user-tie"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-0">Add New Teacher</h6>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-6">
+                        <a href="{% url 'subjects:subject_create' %}"
+                            class="quick-action-btn d-block text-decoration-none">
+                            <div class="d-flex align-items-center">
+                                <div class="icon bg-warning-light text-warning me-3 p-2 rounded">
+                                    <i class="fas fa-book-medical"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-0">Add New Subject</h6>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-6">
+                        <a href="{% url 'events:event_create' %}" class="quick-action-btn d-block text-decoration-none">
+                            <div class="d-flex align-items-center">
+                                <div class="icon bg-info-light text-info me-3 p-2 rounded">
+                                    <i class="fas fa-calendar-plus"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-0">Add New Event</h6>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">System Status</h5>
+            </div>
+            <div class="card-body">
+                <div class="system-status active">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Database Connection: Online</span>
+                </div>
+
+                <div class="text-center mt-3">
+                    <a href="{% url 'admin:index' %}" class="btn btn-primary">Go to Admin Panel</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">Class Distribution</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>Class</th>
+                                <th>Number of Students</th>
+                                <th>Percentage</th>
+                                <th>Teachers Assigned</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for class in class_distribution %}
+                            <tr>
+                                <td>
+                                    {% if class.class_name == '1' %}Class 1
+                                    {% elif class.class_name == '2' %}Class 2
+                                    {% elif class.class_name == '3' %}Class 3
+                                    {% elif class.class_name == '4' %}Class 4
+                                    {% elif class.class_name == '5' %}Class 5
+                                    {% elif class.class_name == '6' %}Class 6
+                                    {% elif class.class_name == '7' %}Class 7
+                                    {% elif class.class_name == '8' %}Class 8
+                                    {% else %}Class {{ class.class_name }}
+                                    {% endif %}
+                                </td>
+                                <td>{{ class.count }}</td>
+                                <td>
+                                    {% if student_count > 0 %}
+                                    {{ class.count|multiply:100|divide:student_count|floatformat:1 }}%
+                                    {% else %}
+                                    0%
+                                    {% endif %}
+                                </td>
+                                <td>{{ class.teacher_count|default:"5" }}</td>
+                                <td>
+                                    <a href="{% url 'timetable:class_timetable' %}?class={{ class.class_name }}"
+                                        class="btn btn-sm btn-info">
+                                        <i class="fas fa-calendar"></i> View Timetable
+                                    </a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" class="text-center">No class data available</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">Recent Activities</h5>
+            </div>
+            <div class="card-body">
+                <div class="activity-timeline">
+                    <div class="activity-item success">
+                        <p class="mb-0">New student registered</p>
+                        <small class="text-muted">30 minutes ago</small>
+                    </div>
+                    <div class="activity-item info">
+                        <p class="mb-0">Fee payment received</p>
+                        <small class="text-muted">2 hours ago</small>
+                    </div>
+                    <div class="activity-item warning">
+                        <p class="mb-0">New event created</p>
+                        <small class="text-muted">Yesterday</small>
+                    </div>
+                    <div class="activity-item danger">
+                        <p class="mb-0">System backup completed</p>
+                        <small class="text-muted">2 days ago</small>
+                    </div>
+                    <div class="activity-item">
+                        <p class="mb-0">Teacher profile updated</p>
+                        <small class="text-muted">3 days ago</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">Upcoming Events</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Event</th>
+                                <th>Date</th>
+                                <th>Type</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for event in upcoming_events %}
+                            <tr>
+                                <td>{{ event.title }}</td>
+                                <td>{{ event.start_date|date:"d M Y" }}</td>
+                                <td>
+                                    <span class="badge 
+                                    {% if event.event_type == 'academic' %}bg-primary
+                                    {% elif event.event_type == 'sports' %}bg-success
+                                    {% elif event.event_type == 'cultural' %}bg-warning
+                                    {% elif event.event_type == 'holiday' %}bg-danger
+                                    {% else %}bg-info{% endif %}">
+                                        {{ event.get_event_type_display }}
+                                    </span>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="3" class="text-center">No upcoming events</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">Ongoing Events</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Event</th>
+                                <th>End Date</th>
+                                <th>Type</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for event in ongoing_events %}
+                            <tr>
+                                <td>{{ event.title }}</td>
+                                <td>{{ event.end_date|date:"d M Y" }}</td>
+                                <td>
+                                    <span class="badge 
+                                    {% if event.event_type == 'academic' %}bg-primary
+                                    {% elif event.event_type == 'sports' %}bg-success
+                                    {% elif event.event_type == 'cultural' %}bg-warning
+                                    {% elif event.event_type == 'holiday' %}bg-danger
+                                    {% else %}bg-info{% endif %}">
+                                        {{ event.get_event_type_display }}
+                                    </span>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="3" class="text-center">No ongoing events</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Permissions Management Section (Admin Only) -->
+{% if request.user.is_staff or request.user.is_superuser %}
+<!-- <div class="row">
+    <div class="col-12 col-lg-12 col-xl-12">
+        <div class="card flex-fill">
+            <div class="card-header">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h5 class="card-title">User Permissions</h5>
+                    </div>
+                    <div class="col-auto">
+                        <a href="{% url 'core:user_permissions' %}" class="btn btn-primary btn-sm">
+                            <i class="fas fa-cog mr-1"></i> Manage Permissions
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle mr-2"></i>
+                            Manage permissions for all users - assign roles, restrict access, and control system
+                            privileges
+                        </div>
+                        <p>As an administrator, you can:</p>
+                        <ul>
+                            <li>View all system users (students, teachers, and others)</li>
+                            <li>Assign user roles (student, teacher, admin)</li>
+                            <li>Control access to system features</li>
+                            <li>Manage permissions for newly registered users</li>
+                        </ul>
+                        <div class="text-center mt-3">
+                            <a href="{% url 'core:user_permissions' %}" class="btn btn-outline-primary">
+                                <i class="fas fa-users-cog mr-1"></i> Go to Permissions Management
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> -->
+{% endif %} 
+{% else %}
+<!-- Regular Dashboard for non-admin users -->
+<div class="row">
+    <div class="col-xl-3 col-sm-6 col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="dash-widget-header">
+                    <span class="dash-widget-icon text-primary border-primary">
+                        <i class="fas fa-user-graduate"></i>
+                    </span>
+                    <div class="dash-count">
+                        <h3>{{ student_count }}</h3>
+                        <h6 class="text-muted">Students</h6>
+                    </div>
+                </div>
+                <p class="text-muted mt-3 mb-0">
+                    <span class="text-success me-1">
+                        <i class="fas fa-arrow-up"></i>
+                    </span>
+                    Active Students
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-sm-6 col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="dash-widget-header">
+                    <span class="dash-widget-icon text-success border-success">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                    </span>
+                    <div class="dash-count">
+                        <h3>{{ teacher_count }}</h3>
+                        <h6 class="text-muted">Teachers</h6>
+                    </div>
+                </div>
+                <p class="text-muted mt-3 mb-0">
+                    <span class="text-success me-1">
+                        <i class="fas fa-arrow-up"></i>
+                    </span>
+                    Active Teachers
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-sm-6 col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="dash-widget-header">
+                    <span class="dash-widget-icon text-warning border-warning">
+                        <i class="fas fa-book"></i>
+                    </span>
+                    <div class="dash-count">
+                        <h3>{{ subject_count }}</h3>
+                        <h6 class="text-muted">Subjects</h6>
+                    </div>
+                </div>
+                <p class="text-muted mt-3 mb-0">
+                    <span class="text-success me-1">
+                        <i class="fas fa-arrow-up"></i>
+                    </span>
+                    Active Subjects
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-sm-6 col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="dash-widget-header">
+                    <span class="dash-widget-icon text-danger border-danger">
+                        <i class="fas fa-dollar-sign"></i>
+                    </span>
+                    <div class="dash-count">
+                        <h3>₹{{ total_revenue|default:"0.00"|floatformat:2 }}</h3>
+                        <h6 class="text-muted">Revenue</h6>
+                    </div>
+                </div>
+                <p class="text-muted mt-3 mb-0">
+                    <span class="text-success me-1">
+                        <i class="fas fa-arrow-up"></i>
+                    </span>
+                    Total Fee Collection
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xl-8 d-flex">
+        <div class="card flex-fill">
+            <div class="card-header">
+                <h4 class="card-title float-start">Class Distribution</h4>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>Class</th>
+                                <th>Number of Students</th>
+                                <th>Percentage</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for class in class_distribution %}
+                            <tr>
+                                <td>
+                                    {% if class.class_name == '1' %}Class 1
+                                    {% elif class.class_name == '2' %}Class 2
+                                    {% elif class.class_name == '3' %}Class 3
+                                    {% elif class.class_name == '4' %}Class 4
+                                    {% elif class.class_name == '5' %}Class 5
+                                    {% elif class.class_name == '6' %}Class 6
+                                    {% elif class.class_name == '7' %}Class 7
+                                    {% elif class.class_name == '8' %}Class 8
+                                    {% else %}Class {{ class.class_name }}
+                                    {% endif %}
+                                </td>
+                                <td>{{ class.count }}</td>
+                                <td>
+                                    {% if student_count > 0 %}
+                                    {{ class.count|multiply:100|divide:student_count|floatformat:1 }}%
+                                    {% else %}
+                                    0%
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="3" class="text-center">No class data available</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-4 d-flex">
+        <div class="card flex-fill">
+            <div class="card-header">
+                <h4 class="card-title">Recent Fee Payments</h4>
+            </div>
+            <div class="card-body">
+                <div class="activity-feed">
+                    {% for payment in recent_payments %}
+                    <div class="feed-item">
+                        <div class="date">{{ payment.payment_date|date:"d M Y" }}</div>
+                        <div class="text">
+                            {{ payment.student.first_name }} {{ payment.student.last_name }} -
+                            ₹{{ payment.amount_paid|floatformat:2 }}
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="text-muted">No recent payments</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+{% if user.is_superuser or user.is_staff %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+<script src="{% static 'js/attendance-chart.js' %}"></script>
+
+<script>
+    // Create a data object in JSON format that can be safely parsed
+    var attendanceDataJson = {
+        "labels": {{ attendance_chart_data.labels|safe }},
+        "studentPresent": {{ attendance_chart_data.student_present|safe }},
+        "studentAbsent": {{ attendance_chart_data.student_absent|safe }},
+        "teacherPresent": {{ attendance_chart_data.teacher_present|safe }},
+        "teacherAbsent": {{ attendance_chart_data.teacher_absent|safe }},
+        "startDate": "{{ attendance_chart_data.start_date }}",
+        "endDate": "{{ attendance_chart_data.end_date }}"
+    };
+
+    window.addEventListener('load', function () {
+        // Initialize the chart with the data
+        if (window.initAttendanceChart) {
+            window.initAttendanceChart(attendanceDataJson);
+        } else {
+            console.error('Attendance chart initialization function not found');
+        }
+
+        // Add event listener for the print button
+        const printButton = document.getElementById('printAttendanceChart');
+        if (printButton) {
+            printButton.addEventListener('click', function () {
+                if (window.generateAttendancePDF) {
+                    window.generateAttendancePDF();
+                } else {
+                    console.error('Generate PDF function not found');
+                    alert('PDF generation functionality is not available.');
+                }
+            });
+        }
+    });
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Find any checkbox elements that might be causing the error
+        var checkboxElement = document.getElementById('your-checkbox-id'); // Replace with the actual ID
+
+        // Add null check before setting checked property
+        if (checkboxElement) {
+            checkboxElement.checked = true; // Or whatever value you're trying to set
+        }
+    });
+</script>
+{% endif %}
+
+<!-- Add these script tags before the closing </body> tag -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
+{% endblock %}

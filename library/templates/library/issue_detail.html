@@ -1,0 +1,155 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Library - Issue Details{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="row align-items-center">
+        <div class="col">
+            <h3 class="page-title">Issue Details</h3>
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'library:issue_list' %}">Issue History</a></li>
+                <li class="breadcrumb-item active">Issue Details</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-12">
+                        <h5 class="form-title"><span>Book Details</span></h5>
+                    </div>
+                    <div class="col-12 col-sm-6">
+                        <div class="form-group">
+                            <label>Book Title</label>
+                            <input type="text" class="form-control" value="{{ issue.book.title }}" readonly>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6">
+                        <div class="form-group">
+                            <label>Author</label>
+                            <input type="text" class="form-control" value="{{ issue.book.author }}" readonly>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <h5 class="form-title"><span>Student Details</span></h5>
+                    </div>
+                    <div class="col-12 col-sm-6">
+                        <div class="form-group">
+                            <label>Student Name</label>
+                            <input type="text" class="form-control"
+                                value="{{ issue.student.first_name }} {{ issue.student.last_name }}" readonly>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6">
+                        <div class="form-group">
+                            <label>Roll Number</label>
+                            <input type="text" class="form-control" value="{{ issue.student.roll_number }}" readonly>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <h5 class="form-title"><span>Issue Details</span></h5>
+                    </div>
+                    <div class="col-12 col-sm-6">
+                        <div class="form-group">
+                            <label>Issue Date</label>
+                            <input type="text" class="form-control" value="{{ issue.issue_date }}" readonly>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6">
+                        <div class="form-group">
+                            <label>Due Date</label>
+                            <input type="text" class="form-control" value="{{ issue.due_date }}" readonly>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6">
+                        <div class="form-group">
+                            <label>Status</label>
+                            <input type="text" class="form-control" value="{{ issue.get_status_display }}" readonly>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6">
+                        <div class="form-group">
+                            <label>Issued By</label>
+                            <input type="text" class="form-control" value="{{ issue.issued_by.get_full_name }}"
+                                readonly>
+                        </div>
+                    </div>
+                    {% if issue.return_date %}
+                    <div class="col-12">
+                        <h5 class="form-title"><span>Return Details</span></h5>
+                    </div>
+                    <div class="col-12 col-sm-6">
+                        <div class="form-group">
+                            <label>Return Date</label>
+                            <input type="text" class="form-control" value="{{ issue.return_date }}" readonly>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6">
+                        <div class="form-group">
+                            <label>Fine Amount</label>
+                            <input type="text" class="form-control" value="{{ issue.fine_amount }}" readonly>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="form-group">
+                            <label>Remarks</label>
+                            <textarea class="form-control" readonly>{{ issue.remarks }}</textarea>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="col-12">
+                        <h5 class="form-title"><span>Return Book</span></h5>
+                        <form method="post" action="{% url 'library:issue_return' issue.pk %}">
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="col-12 col-sm-6">
+                                    <div class="form-group">
+                                        <label>Return Date</label>
+                                        <input type="date" name="return_date" class="form-control" required>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-6">
+                                    <div class="form-group">
+                                        <label>Fine Amount</label>
+                                        <input type="number" name="fine_amount" class="form-control" min="0" step="0.01"
+                                            value="0">
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label>Remarks</label>
+                                        <textarea name="remarks" class="form-control" rows="3"></textarea>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <button type="submit" class="btn btn-primary">Return Book</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    {% endif %}
+                    <div class="col-12 mt-3">
+                        <a href="{% url 'library:issue_list' %}" class="btn btn-secondary">Back to List</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    $(document).ready(function () {
+        // Set minimum return date to today
+        const today = new Date().toISOString().split('T')[0];
+        $('input[name="return_date"]').attr('min', today);
+    });
+</script>
+{% endblock %}

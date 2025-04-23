@@ -1,0 +1,155 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3 class="page-title">{{ title }}</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'core:home' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'timetable:timetable_list' %}">Timetable</a></li>
+                    <li class="breadcrumb-item active">{{ title }}</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+
+                        {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {% for error in form.non_field_errors %}
+                            {{ error }}
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+
+                        <div class="row">
+                            <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                    <label>Class</label>
+                                    {{ form.class_name }}
+                                    {% if form.class_name.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.class_name.errors %}
+                                        {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                    <label>Day</label>
+                                    {{ form.day }}
+                                    {% if form.day.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.day.errors %}
+                                        {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                    <label>Period</label>
+                                    {{ form.period }}
+                                    {% if form.period.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.period.errors %}
+                                        {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                    <label>Subject</label>
+                                    {{ form.subject }}
+                                    {% if form.subject.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.subject.errors %}
+                                        {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                    <label>Teacher</label>
+                                    {{ form.teacher }}
+                                    {% if form.teacher.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.teacher.errors %}
+                                        {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                    <label>Room Number</label>
+                                    {{ form.room_number }}
+                                    {% if form.room_number.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.room_number.errors %}
+                                        {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                    <label>Start Time</label>
+                                    {{ form.start_time }}
+                                    {% if form.start_time.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.start_time.errors %}
+                                        {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                    <label>End Time</label>
+                                    {{ form.end_time }}
+                                    {% if form.end_time.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.end_time.errors %}
+                                        {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary">Save</button>
+                                <a href="{% url 'timetable:timetable_list' %}" class="btn btn-secondary">Cancel</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

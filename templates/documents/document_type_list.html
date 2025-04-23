@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Document Types{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h3 class="card-title">Document Types</h3>
+                    </div>
+                    <div class="col-auto">
+                        <a href="{% url 'documents:document_type_create' %}" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Add Document Type
+                        </a>
+                        <a href="{% url 'documents:document_matrix' %}" class="btn btn-secondary">
+                            <i class="fas fa-table"></i> Documents Matrix
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Description</th>
+                                <th>Required</th>
+                                <th>Status</th>
+                                <th>Created</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for doc_type in document_types %}
+                            <tr>
+                                <td>{{ doc_type.name }}</td>
+                                <td>{{ doc_type.description|truncatechars:50 }}</td>
+                                <td>
+                                    {% if doc_type.required %}
+                                    <span class="badge bg-primary">Required</span>
+                                    {% else %}
+                                    <span class="badge bg-secondary">Optional</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if doc_type.active %}
+                                    <span class="badge bg-success">Active</span>
+                                    {% else %}
+                                    <span class="badge bg-danger">Inactive</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ doc_type.created_at|date:"M d, Y" }}</td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a href="{% url 'documents:document_type_update' doc_type.id %}"
+                                            class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-edit"></i> Edit
+                                        </a>
+                                        <a href="{% url 'documents:document_type_delete' doc_type.id %}"
+                                            class="btn btn-sm btn-outline-danger">
+                                            <i class="fas fa-trash"></i> Delete
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="6" class="text-center">No document types found. <a
+                                        href="{% url 'documents:document_type_create' %}">Create one now</a>.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

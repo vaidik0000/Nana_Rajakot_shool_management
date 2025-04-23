@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Edit Attendance{% endblock %}
+
+{% block content %}
+<div class="page-wrapper">
+    <div class="content container-fluid">
+        <div class="page-header">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h3 class="page-title">Edit Attendance</h3>
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'core:home' %}">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="{% url 'attendance:list' %}">Attendance</a></li>
+                        <li class="breadcrumb-item active">Edit</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="row">
+            <div class="col-md-8 mx-auto">
+                <div class="card">
+                    <div class="card-body">
+                        <form method="post">
+                            {% csrf_token %}
+
+                            <div class="form-group row">
+                                <label class="col-md-3 col-form-label">Student</label>
+                                <div class="col-md-9 form-control-static">
+                                    {{ attendance.student.first_name }} {{ attendance.student.last_name }}
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="col-md-3 col-form-label">Class</label>
+                                <div class="col-md-9 form-control-static">
+                                    {{ attendance.student.get_class_name_display }}
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="col-md-3 col-form-label">Date</label>
+                                <div class="col-md-9">
+                                    <input type="date" name="date" class="form-control"
+                                        value="{{ attendance.date|date:'Y-m-d' }}" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="col-md-3 col-form-label">Attendance Status</label>
+                                <div class="col-md-9">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="status" id="status_present"
+                                            value="present" {% if attendance.status=='present' %}checked{% endif %}
+                                            required>
+                                        <label class="form-check-label" for="status_present">Present</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="status" id="status_absent"
+                                            value="absent" {% if attendance.status=='absent' %}checked{% endif %}
+                                            required>
+                                        <label class="form-check-label" for="status_absent">Absent</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="status" id="status_late"
+                                            value="late" {% if attendance.status=='late' %}checked{% endif %} required>
+                                        <label class="form-check-label" for="status_late">Late</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="status" id="status_half_day"
+                                            value="half_day" {% if attendance.status=='half_day' %}checked{% endif %}
+                                            required>
+                                        <label class="form-check-label" for="status_half_day">Half Day</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="col-md-3 col-form-label">Remarks</label>
+                                <div class="col-md-9">
+                                    <textarea name="remarks" class="form-control"
+                                        rows="3">{{ attendance.remarks }}</textarea>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <div class="col-md-9 offset-md-3">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-save"></i> Update Attendance
+                                    </button>
+                                    <a href="{% url 'attendance:detail' attendance.id %}"
+                                        class="btn btn-secondary ml-2">
+                                        <i class="fas fa-times"></i> Cancel
+                                    </a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(document).ready(function () {
+        $('form').submit(function (e) {
+            var statusSelected = $('input[name="status"]:checked').length > 0;
+
+            if (!statusSelected) {
+                e.preventDefault();
+                alert('Please select an attendance status');
+                return false;
+            }
+
+            return true;
+        });
+    });
+</script>
+{% endblock %}

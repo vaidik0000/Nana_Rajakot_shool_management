@@ -1,0 +1,143 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Library - Return Book{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="row align-items-center">
+        <div class="col">
+            <h3 class="page-title">Return Book</h3>
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'library:issue_list' %}">Issue History</a></li>
+                <li class="breadcrumb-item active">Return Book</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="card">
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+
+                    <!-- Non-field errors -->
+                    {% if form.non_field_errors %}
+                    <div class="alert alert-danger">
+                        {{ form.non_field_errors }}
+                    </div>
+                    {% endif %}
+
+                    <div class="row">
+                        <div class="col-12">
+                            <h5 class="form-title"><span>Book Details</span></h5>
+                        </div>
+                        <div class="col-12 col-sm-6">
+                            <div class="form-group">
+                                <label>Book</label>
+                                <input type="text" class="form-control" value="{{ issue.book.title }}" readonly>
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-6">
+                            <div class="form-group">
+                                <label>Student</label>
+                                <input type="text" class="form-control"
+                                    value="{{ issue.student.first_name }} {{ issue.student.last_name }}" readonly>
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-6">
+                            <div class="form-group">
+                                <label>Issue Date</label>
+                                <input type="text" class="form-control" value="{{ issue.issue_date }}" readonly>
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-6">
+                            <div class="form-group">
+                                <label>Due Date</label>
+                                <input type="text" class="form-control" value="{{ issue.due_date }}" readonly>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <h5 class="form-title"><span>Return Details</span></h5>
+                        </div>
+
+                        <div class="col-12 col-sm-6">
+                            <div class="form-group">
+                                <label for="id_return_date">Return Date</label>
+                                {{ form.return_date }}
+                                {% if form.return_date.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.return_date.errors }}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-sm-6">
+                            <div class="form-group">
+                                <label for="id_fine_amount">Fine Amount</label>
+                                {{ form.fine_amount }}
+                                {% if form.fine_amount.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.fine_amount.errors }}
+                                </div>
+                                {% endif %}
+                                {% if form.fine_amount.help_text %}
+                                <small class="form-text text-muted">{{ form.fine_amount.help_text }}</small>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-sm-6">
+                            <div class="form-group">
+                                <label for="id_status">Status</label>
+                                {{ form.status }}
+                                {% if form.status.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.status.errors }}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label for="id_remarks">Remarks</label>
+                                {{ form.remarks }}
+                                {% if form.remarks.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.remarks.errors }}
+                                </div>
+                                {% endif %}
+                                {% if form.remarks.help_text %}
+                                <small class="form-text text-muted">{{ form.remarks.help_text }}</small>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary">Return Book</button>
+                            <a href="{% url 'library:issue_list' %}" class="btn btn-secondary">Cancel</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Fallback for browsers that don't support type=date
+        const returnDate = document.getElementById("id_return_date");
+        if (returnDate && returnDate.type !== "date") {
+            returnDate.type = "date";
+        }
+    });
+</script>
+{% endblock %}

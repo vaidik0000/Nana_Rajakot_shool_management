@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ teacher.full_name }} - School Management System{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="row align-items-center">
+        <div class="col">
+            <h3 class="page-title">Teacher Details</h3>
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'core:home' %}">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'school_teachers:teacher_list' %}">Teachers</a></li>
+                <li class="breadcrumb-item active">{{ teacher.full_name }}</li>
+            </ul>
+        </div>
+        <div class="col-auto float-end ms-auto">
+            {% if not request.user_type == 'teacher' %}
+            <a href="{% url 'school_teachers:teacher_update' teacher.pk %}" class="btn btn-primary me-2">
+                <i class="fas fa-edit"></i> Edit
+            </a>
+            {% endif %}
+            <a href="{% url 'school_teachers:generate_teacher_pdf' teacher.pk %}" class="btn btn-info me-2">
+                <i class="fas fa-file-pdf"></i> Generate PDF
+            </a>
+            <a href="{% url 'school_teachers:teacher_list' %}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to List
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="about-info">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="profile-img">
+                                        {% if teacher.profile_picture %}
+                                        <img src="{{ teacher.profile_picture.url }}" alt="Teacher Image"
+                                            class="img-fluid rounded-circle">
+                                        {% else %}
+                                        <img src="{% static 'assets/img/profiles/avatar-01.jpg' %}" alt="Teacher Image"
+                                            class="img-fluid rounded-circle">
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-md-9">
+                                    <div class="profile-info">
+                                        <h4 class="mb-1">{{ teacher.full_name }}</h4>
+                                        <p class="text-muted mb-2">{{ teacher.specialization }}</p>
+                                        <div class="status">
+                                            {% if teacher.is_active %}
+                                            <span class="badge badge-success">Active</span>
+                                            {% else %}
+                                            <span class="badge badge-danger">Inactive</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <h5 class="mb-3">Personal Information</h5>
+                        <table class="table table-bordered">
+                            <tbody>
+                                <tr>
+                                    <th>Employee ID</th>
+                                    <td>{{ teacher.employee_id }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Gender</th>
+                                    <td>{{ teacher.get_gender_display }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Date of Birth</th>
+                                    <td>{{ teacher.date_of_birth }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Email</th>
+                                    <td>{{ teacher.email }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Phone</th>
+                                    <td>{{ teacher.phone_number }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Address</th>
+                                    <td>{{ teacher.address }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <h5 class="mb-3">Professional Information</h5>
+                        <table class="table table-bordered">
+                            <tbody>
+                                <tr>
+                                    <th>Qualification</th>
+                                    <td>{{ teacher.qualification }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Specialization</th>
+                                    <td>{{ teacher.specialization }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Joining Date</th>
+                                    <td>{{ teacher.joining_date }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Status</th>
+                                    <td>
+                                        {% if teacher.is_active %}
+                                        <span class="badge badge-success">Active</span>
+                                        {% else %}
+                                        <span class="badge badge-danger">Inactive</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,378 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Teacher Attendance Calendar{% endblock %}
+
+{% block custom_css %}
+<style>
+    .calendar-container {
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        padding: 20px;
+        margin-bottom: 30px;
+    }
+
+    .calendar-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .calendar-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin: 0;
+    }
+
+    .calendar-nav {
+        display: flex;
+        align-items: center;
+    }
+
+    .calendar-nav a {
+        margin: 0 10px;
+        font-size: 14px;
+    }
+
+    .calendar-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .calendar-table th {
+        background-color: #f8f9fa;
+        text-align: center;
+        padding: 12px;
+        font-weight: 600;
+    }
+
+    .calendar-table td {
+        border: 1px solid #e9ecef;
+        height: 120px;
+        width: 14.28%;
+        vertical-align: top;
+        padding: 8px;
+    }
+
+    .calendar-day {
+        font-weight: 600;
+        margin-bottom: 5px;
+        text-align: right;
+    }
+
+    .calendar-day.today {
+        background-color: #007bff;
+        color: white;
+        width: 25px;
+        height: 25px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        float: right;
+    }
+
+    .calendar-day.other-month {
+        color: #adb5bd;
+    }
+
+    .attendance-dot {
+        display: block;
+        width: 100%;
+        padding: 6px 8px;
+        margin-bottom: 5px;
+        border-radius: 4px;
+        font-size: 12px;
+        text-align: center;
+    }
+
+    .attendance-present {
+        background-color: #28a745;
+        color: white;
+    }
+
+    .attendance-absent {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    .attendance-late {
+        background-color: #ffc107;
+        color: black;
+    }
+
+    .attendance-half_day {
+        background-color: #17a2b8;
+        color: white;
+    }
+
+    .attendance-stats {
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+    }
+
+    .stat-card {
+        background: white;
+        border-radius: 8px;
+        padding: 15px;
+        flex: 1;
+        min-width: 180px;
+        margin: 0 10px 10px 0;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .stat-title {
+        font-size: 14px;
+        color: #6c757d;
+        margin-bottom: 5px;
+    }
+
+    .stat-value {
+        font-size: 24px;
+        font-weight: 600;
+    }
+
+    .stat-percent {
+        font-size: 14px;
+        color: #6c757d;
+    }
+
+    .legend {
+        display: flex;
+        margin-top: 15px;
+    }
+
+    .legend-item {
+        display: flex;
+        align-items: center;
+        margin-right: 15px;
+    }
+
+    .legend-color {
+        width: 16px;
+        height: 16px;
+        border-radius: 3px;
+        margin-right: 5px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-wrapper">
+    <div class="content container-fluid">
+
+        <div class="page-header">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h3 class="page-title">Teacher Attendance Calendar</h3>
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'core:home' %}">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="{% url 'attendance:teacher_attendance_list' %}">Teacher
+                                Attendance</a></li>
+                        <li class="breadcrumb-item active">Calendar View</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        {% if messages %}
+        <div class="row">
+            <div class="col-12">
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-body">
+                        <form method="get" class="form">
+                            <div class="row">
+                                <div class="col-md-4 form-group">
+                                    <label for="id_teacher">Select Teacher</label>
+                                    <select name="teacher" id="id_teacher" class="form-control select2">
+                                        <option value="">-- All Teachers --</option>
+                                        {% for teacher in teachers %}
+                                        <option value="{{ teacher.id }}" {% if selected_teacher.id==teacher.id
+                                            %}selected{% endif %}>
+                                            {{ teacher.first_name }} {{ teacher.last_name }}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-md-3 form-group">
+                                    <label for="id_month">Month</label>
+                                    <select name="month" id="id_month" class="form-control">
+                                        {% for month_num, month_name in months %}
+                                        <option value="{{ month_num }}" {% if current_month==month_num %}selected{%
+                                            endif %}>
+                                            {{ month_name }}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-md-3 form-group">
+                                    <label for="id_year">Year</label>
+                                    <select name="year" id="id_year" class="form-control">
+                                        {% for year in years %}
+                                        <option value="{{ year }}" {% if current_year==year %}selected{% endif %}>
+                                            {{ year }}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-md-2 form-group">
+                                    <label class="d-block">&nbsp;</label>
+                                    <button type="submit" class="btn btn-primary btn-block">View</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% if selected_teacher %}
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="attendance-stats">
+                            <div class="stat-card" style="border-left: 4px solid #28a745;">
+                                <div class="stat-title">Present</div>
+                                <div class="stat-value">{{ present_count }}</div>
+                                <div class="stat-percent">{{ present_percent }}%</div>
+                            </div>
+                            <div class="stat-card" style="border-left: 4px solid #dc3545;">
+                                <div class="stat-title">Absent</div>
+                                <div class="stat-value">{{ absent_count }}</div>
+                                <div class="stat-percent">{{ absent_percent }}%</div>
+                            </div>
+                            <div class="stat-card" style="border-left: 4px solid #ffc107;">
+                                <div class="stat-title">Late</div>
+                                <div class="stat-value">{{ late_count }}</div>
+                                <div class="stat-percent">{{ late_percent }}%</div>
+                            </div>
+                            <div class="stat-card" style="border-left: 4px solid #17a2b8;">
+                                <div class="stat-title">Half Day</div>
+                                <div class="stat-value">{{ half_day_count }}</div>
+                                <div class="stat-percent">{{ half_day_percent }}%</div>
+                            </div>
+                            <div class="stat-card" style="border-left: 4px solid #6c757d;">
+                                <div class="stat-title">Total Days</div>
+                                <div class="stat-value">{{ total_days }}</div>
+                                <div class="stat-percent">100%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="calendar-container">
+                    <div class="calendar-header">
+                        <h2 class="calendar-title">
+                            {{ current_month_name }} {{ current_year }}
+                            {% if selected_teacher %}
+                            - {{ selected_teacher.first_name }} {{ selected_teacher.last_name }}
+                            {% else %}
+                            - All Teachers
+                            {% endif %}
+                        </h2>
+                        <div class="calendar-nav">
+                            <a href="?{% if selected_teacher %}teacher={{ selected_teacher.id }}&{% endif %}month={{ prev_month }}&year={{ prev_year }}"
+                                class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-chevron-left"></i> Previous Month
+                            </a>
+                            <a href="?{% if selected_teacher %}teacher={{ selected_teacher.id }}&{% endif %}month={{ next_month }}&year={{ next_year }}"
+                                class="btn btn-sm btn-outline-primary">
+                                Next Month <i class="fas fa-chevron-right"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <table class="calendar-table">
+                        <thead>
+                            <tr>
+                                <th>Sunday</th>
+                                <th>Monday</th>
+                                <th>Tuesday</th>
+                                <th>Wednesday</th>
+                                <th>Thursday</th>
+                                <th>Friday</th>
+                                <th>Saturday</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for week in calendar_data %}
+                            <tr>
+                                {% for day, is_current_month, is_today, attendance in week %}
+                                <td class="{% if not is_current_month %}bg-light{% endif %}">
+                                    <div
+                                        class="calendar-day {% if is_today %}today{% endif %} {% if not is_current_month %}other-month{% endif %}">
+                                        {{ day }}
+                                    </div>
+
+                                    {% if is_current_month and attendance %}
+                                    <div class="attendance-dot attendance-{{ attendance.status }}">
+                                        {{ attendance.get_status_display }}
+                                    </div>
+                                    {% if attendance.remarks %}
+                                    <small class="text-muted">{{ attendance.remarks|truncatechars:20 }}</small>
+                                    {% endif %}
+                                    {% endif %}
+                                </td>
+                                {% endfor %}
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+
+                    <div class="legend">
+                        <div class="legend-item">
+                            <div class="legend-color" style="background-color: #28a745;"></div>
+                            <span>Present</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background-color: #dc3545;"></div>
+                            <span>Absent</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background-color: #ffc107;"></div>
+                            <span>Late</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background-color: #17a2b8;"></div>
+                            <span>Half Day</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    $(document).ready(function () {
+        $('.select2').select2();
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,355 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Student Attendance Reports{% endblock %}
+
+{% block custom_css %}
+<style>
+    .report-filters {
+        background-color: #f8f9fa;
+        padding: 15px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .status-badge {
+        font-size: 14px;
+        padding: 5px 10px;
+        border-radius: 30px;
+    }
+
+    .present-badge {
+        background-color: #28a745;
+        color: white;
+    }
+
+    .absent-badge {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    .late-badge {
+        background-color: #ffc107;
+        color: black;
+    }
+
+    .half-day-badge {
+        background-color: #6c757d;
+        color: white;
+    }
+
+    .stat-card {
+        text-align: center;
+        padding: 15px;
+        border-radius: 5px;
+        margin-bottom: 15px;
+    }
+
+    .stat-card h3 {
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+
+    .stat-card p {
+        margin-bottom: 0;
+        color: #6c757d;
+    }
+
+    .present-card {
+        background-color: rgba(40, 167, 69, 0.1);
+        border-left: 4px solid #28a745;
+    }
+
+    .absent-card {
+        background-color: rgba(220, 53, 69, 0.1);
+        border-left: 4px solid #dc3545;
+    }
+
+    .late-card {
+        background-color: rgba(255, 193, 7, 0.1);
+        border-left: 4px solid #ffc107;
+    }
+
+    .half-day-card {
+        background-color: rgba(108, 117, 125, 0.1);
+        border-left: 4px solid #6c757d;
+    }
+
+    .percentage-card {
+        background-color: rgba(13, 110, 253, 0.1);
+        border-left: 4px solid #0d6efd;
+    }
+
+    .attendance-table th {
+        background-color: #f8f9fa;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3 class="page-title">Student Attendance Reports</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'core:home' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'attendance:list' %}">Attendance</a></li>
+                    <li class="breadcrumb-item active">Student Reports</li>
+                </ul>
+            </div>
+            <div class="col-auto text-right float-right ml-auto">
+                <a href="{% url 'attendance:teacher_attendance_report' %}" class="btn btn-primary">
+                    <i class="fas fa-chalkboard-teacher"></i> Teacher Attendance Reports
+                </a>
+            </div>
+        </div>
+    </div>
+
+    {% if messages %}
+    <div class="row">
+        <div class="col-md-12">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Report Filters -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="mb-4">
+                        <form method="get" id="report-form">
+                            <div class="row">
+                                <div class="col-md-3 mb-2">
+                                    <div class="form-group">
+                                        <label>Report Type</label>
+                                        <select name="report_type" id="report_type" class="form-control" required>
+                                            <option value="">Select Report Type</option>
+                                            <option value="student" {% if report_type == 'student' %}selected{% endif %}>
+                                                Student</option>
+                                            <option value="class" {% if report_type == 'class' %}selected{% endif %}>Class
+                                                Attendance</option>
+                                            <option value="teacher" {% if report_type == 'teacher' %}selected{% endif %}>
+                                                Teacher</option>
+                                        </select>
+                                    </div>
+                                <div class="col-md-3 student-filter {% if report_type != 'student' %}d-none{% endif %}">
+                                    <div class="form-group">
+                                        <label>Student</label>
+                                        <select name="student_id" id="student_id" class="form-control">
+                                            <option value="">Select Student</option>
+                                            {% for student in students %}
+                                            <option value="{{ student.id }}" {% if student_id|stringformat:"i" == student.id|stringformat:"i" %}selected{% endif %}>
+                                                {{ student.first_name }} {{ student.last_name }}
+                                            </option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3 class-filter {% if report_type != 'class' %}d-none{% endif %}">
+                                    <div class="form-group">
+                                        <label>Class</label>
+                                        <select name="class_name" id="class_name" class="form-control">
+                                            <option value="">Select Class</option>
+                                            {% for class_code, class_name in class_choices %}
+                                            <option value="{{ class_code }}" {% if class_id == class_code %}selected{% endif %}>
+                                                {{ class_name }}
+                                            </option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3 mb-2">
+                                    <div class="form-group">
+                                        <label>Start Date</label>
+                                        <input type="date" name="start_date" id="start_date" class="form-control"
+                                            value="{{ start_date|default:'' }}" required>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3 mb-2">
+                                    <div class="form-group">
+                                        <label>End Date</label>
+                                        <input type="date" name="end_date" id="end_date" class="form-control"
+                                            value="{{ end_date|default:'' }}" required>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3 align-self-end mb-2">
+                                    <div class="form-group mb-0">
+                                        <button type="submit" class="btn btn-primary mr-2">Generate Report</button>
+                                        <button type="button" id="reset-btn" class="btn btn-secondary">Reset</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    {% if attendance_records %}
+                    <!-- Attendance Statistics -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="card-title">
+                                {% if report_type == 'student' %}
+                                Attendance Report for {{ student_name }}
+                                {% elif report_type == 'class' %}
+                                Attendance Report for {{ class_name }}
+                                {% endif %}
+                                ({{ start_date }} to {{ end_date }})
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <div class="stat-card present-card">
+                                        <h3>{{ present_count }}</h3>
+                                        <p>Present</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="stat-card absent-card">
+                                        <h3>{{ absent_count }}</h3>
+                                        <p>Absent</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="stat-card late-card">
+                                        <h3>{{ late_count }}</h3>
+                                        <p>Late</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="stat-card half-day-card">
+                                        <h3>{{ half_day_count }}</h3>
+                                        <p>Half Day</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="stat-card percentage-card">
+                                        <h3>{{ attendance_percentage }}%</h3>
+                                        <p>Attendance Percentage</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Attendance Records -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title">Attendance Records</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Date</th>
+                                            {% if report_type != 'student' %}
+                                            <th>Student</th>
+                                            {% endif %}
+                                            {% if report_type != 'class' %}
+                                            <th>Class</th>
+                                            {% endif %}
+                                            <th>Status</th>
+                                            <th>Remarks</th>
+                                            <th>Recorded By</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for record in attendance_records %}
+                                        <tr>
+                                            <td>{{ record.date }}</td>
+                                            {% if report_type != 'student' %}
+                                            <td>{{ record.student.first_name }} {{ record.student.last_name }}</td>
+                                            {% endif %}
+                                            {% if report_type != 'class' %}
+                                            <td>{{ record.student.get_class_name_display }}</td>
+                                            {% endif %}
+                                            <td>
+                                                {% if record.status == 'present' %}
+                                                <span class="badge bg-success"
+                                                    style="padding: 8px 12px; font-size: 12px; border-radius: 30px;">Present</span>
+                                                {% elif record.status == 'absent' %}
+                                                <span class="badge bg-danger"
+                                                    style="padding: 8px 12px; font-size: 12px; border-radius: 30px;">Absent</span>
+                                                {% elif record.status == 'late' %}
+                                                <span class="badge bg-warning"
+                                                    style="padding: 8px 12px; font-size: 12px; border-radius: 30px;">Late</span>
+                                                {% elif record.status == 'half_day' %}
+                                                <span class="badge bg-info"
+                                                    style="padding: 8px 12px; font-size: 12px; border-radius: 30px;">Half
+                                                    Day</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>{{ record.remarks|default:"-" }}</td>
+                                            <td>{{ record.recorded_by.get_full_name|default:"System" }}</td>
+                                        </tr>
+                                        {% empty %}
+                                        <tr>
+                                            <td colspan="6" class="text-center">No attendance records found.</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info">
+                        Please select the report criteria to generate attendance report.
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Initialize Select2 for dropdowns
+        if ($.fn.select2) {
+            $('#student_id, #class_name').select2();
+        }
+
+        // Handle report type changes
+        const reportTypeSelect = document.getElementById('report_type');
+        const studentFilter = document.querySelector('.student-filter');
+        const classFilter = document.querySelector('.class-filter');
+
+        reportTypeSelect.addEventListener('change', function () {
+            // Hide all filters first
+            studentFilter.classList.add('d-none');
+            classFilter.classList.add('d-none');
+
+            // Show the appropriate filter based on selection
+            if (this.value === 'student') {
+                studentFilter.classList.remove('d-none');
+            } else if (this.value === 'class') {
+                classFilter.classList.remove('d-none');
+            }
+        });
+
+        // Handle reset button
+        document.getElementById('reset-btn').addEventListener('click', function () {
+            window.location.href = '{% url "attendance:attendance_report" %}';
+        });
+    });
+</script>
+{% endblock %}

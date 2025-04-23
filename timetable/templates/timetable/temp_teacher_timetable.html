@@ -1,0 +1,162 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load timetable_extras %}
+
+{% block title %}Teacher Timetable{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3 class="page-title">Teacher Timetable</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'core:home' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'timetable:timetable_list' %}">Timetable</a></li>
+                    <li class="breadcrumb-item active">Teacher Timetable</li>
+                </ul>
+            </div>
+            <div class="col-auto text-end float-end ms-auto">
+                {% if selected_teacher %}
+                <a href="{% url 'timetable:generate_teacher_timetable_pdf_detail' selected_teacher.id %}"
+                    class="btn btn-info me-2">
+                    <i class="fas fa-file-pdf"></i> Download PDF
+                </a>
+                {% endif %}
+                {% if can_edit %}
+                <a href="{% url 'timetable:timetable_create' %}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Add Timetable Entry
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Teacher Selection -->
+    {% if not is_teacher %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <form method="get" class="form-inline">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <select name="teacher" class="form-control" onchange="this.form.submit()">
+                                    <option value="">Select Teacher</option>
+                                    {% for teacher in teachers %}
+                                    <option value="{{ teacher.id }}" {% if selected_teacher and selected_teacher.id == teacher.id %}selected{% endif %}>
+                                        {{ teacher.first_name }} {{ teacher.last_name }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if selected_teacher %}
+    <!-- Teacher Info Card if teacher is viewing their own timetable -->
+    {% if is_teacher %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h4>{{ selected_teacher.first_name }} {{ selected_teacher.last_name }}'s Timetable</h4>
+                            <p class="text-muted">Employee ID: {{ selected_teacher.employee_id }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Timetable Display -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Period</th>
+                                    {% for day_id, day_name in days.items %}
+                                    <th>{{ day_name }}</th>
+                                    {% endfor %}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for period_id, period_name in periods.items %}
+                                <tr>
+                                    <th>{{ period_name }}</th>
+                                    {% for day_id, day_name in days.items %}
+                                    <td>
+                                        {% with entry=timetable_by_day|get_dict_value:day_id|get_dict_value:period_id %}
+                                        {% if entry %}
+                                        <div>
+                                            <strong>{{ entry.subject.name }}</strong><br>
+                                            Class: {{ entry.get_class_name_display }}<br>
+                                            Room: {{ entry.room_number }}<br>
+                                            {{ entry.start_time|time:"H:i" }} - {{ entry.end_time|time:"H:i" }}
+                                            {% if can_edit %}
+                                            <div class="mt-2">
+                                                <a href="{% url 'timetable:timetable_edit' entry.id %}"
+                                                    class="btn btn-sm bg-success-light me-2" title="Edit">
+                                                    <i class="fas fa-pen"></i>
+                                                </a>
+                                                <a href="{% url 'timetable:timetable_delete' entry.id %}"
+                                                    class="btn btn-sm bg-danger-light" title="Delete">
+                                                    <i class="fas fa-trash"></i>
+                                                </a>
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                        {% else %}
+                                        {% if can_edit %}
+                                        <a href="{% url 'timetable:timetable_create' %}?teacher={{ selected_teacher.id }}&day={{ day_id }}&period={{ period_id }}"
+                                            class="btn btn-sm btn-outline-primary" title="Add Entry">
+                                            <i class="fas fa-plus"></i> Add
+                                        </a>
+                                        {% endif %}
+                                        {% endif %}
+                                        {% endwith %}
+                                    </td>
+                                    {% endfor %}
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body text-center">
+                    {% if not is_teacher %}
+                    <h4>Please select a teacher to view their timetable</h4>
+                    {% else %}
+                    <h4>No timetable entries found for you</h4>
+                    <p>The administrator needs to create timetable entries for you.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

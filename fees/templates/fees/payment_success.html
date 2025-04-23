@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Payment Success - School Management System{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="row align-items-center">
+        <div class="col">
+            <h3 class="page-title">Payment Success</h3>
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'core:home' %}">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'fees:fee_payment_list' %}">Fee Transactions</a></li>
+                <li class="breadcrumb-item active">Payment Success</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card">
+            <div class="card-body text-center">
+                <div class="mb-4">
+                    <i class="fas fa-check-circle text-success" style="font-size: 80px;"></i>
+                </div>
+                <h2 class="mb-3">Payment Successful!</h2>
+                <p class="mb-4">Your payment has been successfully processed.</p>
+
+                <div class="payment-details mb-4">
+                    <div class="row">
+                        <div class="col-md-6 text-md-right">
+                            <strong>Transaction ID:</strong>
+                        </div>
+                        <div class="col-md-6 text-md-left">
+                            {{ transaction.transaction_id }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 text-md-right">
+                            <strong>Amount:</strong>
+                        </div>
+                        <div class="col-md-6 text-md-left">
+                            ₹{{ transaction.amount }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 text-md-right">
+                            <strong>Student:</strong>
+                        </div>
+                        <div class="col-md-6 text-md-left">
+                            {{ transaction.student.first_name }} {{ transaction.student.last_name }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 text-md-right">
+                            <strong>Date:</strong>
+                        </div>
+                        <div class="col-md-6 text-md-left">
+                            {{ transaction.created_at|date:"d M, Y H:i" }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <a href="{% url 'fees:fee_payment_list' %}" class="btn btn-primary">Back to Transactions</a>
+                    <a href="{% url 'students:student_detail' transaction.student.id %}" class="btn btn-info">View
+                        Student</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

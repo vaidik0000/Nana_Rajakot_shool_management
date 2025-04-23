@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Verify OTP - School Management System{% endblock %}
+
+{% block content %}
+<div class="main-wrapper login-body">
+    <div class="login-wrapper">
+        <div class="container">
+            <div class="loginbox">
+                <div class="login-left">
+                    <img class="img-fluid" src="{% static 'assets/img/sarswati_2.jpg' %}" alt="Saraswati">
+                </div>
+                <div class="login-right">
+                    <div class="login-right-wrap">
+                        <h1>Verify OTP</h1>
+                        <p class="account-subtitle">Enter the OTP sent to your email</p>
+
+                        {% if messages %}
+                        <div class="messages">
+                            {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                    aria-label="Close"></button>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+
+                        <form method="post" class="needs-validation" novalidate>
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <input type="text" class="form-control" name="otp" placeholder="Enter OTP" required>
+                                <input type="hidden" name="email" value="{{ email }}">
+                            </div>
+                            <div class="form-group">
+                                <button class="btn btn-primary btn-block" type="submit">Verify OTP</button>
+                            </div>
+                        </form>
+
+                        <div class="text-center dont-have">
+                            <p>Didn't receive the OTP? <a href="{% url 'core:signup' %}">Register again</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

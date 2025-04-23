@@ -1,0 +1,513 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Student Attendance Calendar{% endblock %}
+
+{% block extra_css %}
+<style>
+    .calendar-container {
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+
+    .calendar-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .calendar-navigation {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+
+    .month-title {
+        font-size: 24px;
+        font-weight: bold;
+        margin: 0;
+    }
+
+    .calendar-filters {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .calendar-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 4px;
+        margin-bottom: 20px;
+    }
+
+    .calendar-table th {
+        background-color: #f0f0f0;
+        padding: 10px;
+        text-align: center;
+        font-weight: 600;
+        border-radius: 4px;
+    }
+
+    .calendar-day {
+        width: 14.28%;
+        height: 100px;
+        vertical-align: top;
+        padding: 8px;
+        border-radius: 6px;
+        position: relative;
+        background-color: #f9f9f9;
+        transition: transform 0.1s;
+    }
+
+    .calendar-day:hover {
+        transform: scale(1.02);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .day-number {
+        font-weight: bold;
+        font-size: 16px;
+        margin-bottom: 5px;
+    }
+
+    .calendar-day.outside-month {
+        background-color: #eaeaea;
+        color: #999;
+    }
+
+    .attendance-present {
+        background-color: rgba(40, 167, 69, 0.15);
+        border-left: 4px solid #28a745;
+    }
+
+    .attendance-absent {
+        background-color: rgba(220, 53, 69, 0.15);
+        border-left: 4px solid #dc3545;
+    }
+
+    .attendance-late {
+        background-color: rgba(255, 193, 7, 0.15);
+        border-left: 4px solid #ffc107;
+    }
+
+    .attendance-half-day {
+        background-color: rgba(23, 162, 184, 0.15);
+        border-left: 4px solid #17a2b8;
+    }
+
+    .attendance-unknown {
+        background-color: #f9f9f9;
+    }
+
+    .attendance-badge {
+        display: inline-block;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 12px;
+        margin-top: 6px;
+    }
+
+    .badge-present {
+        background-color: #28a745;
+        color: white;
+    }
+
+    .badge-absent {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    .badge-late {
+        background-color: #ffc107;
+        color: #212529;
+    }
+
+    .badge-half-day {
+        background-color: #17a2b8;
+        color: white;
+    }
+
+    .today {
+        box-shadow: 0 0 0 2px #007bff;
+    }
+
+    .calendar-day-tooltip {
+        position: absolute;
+        bottom: 8px;
+        left: 8px;
+        right: 8px;
+        font-size: 11px;
+        color: #666;
+    }
+
+    .stats-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+
+    .stat-card {
+        flex: 1;
+        min-width: 120px;
+        background-color: white;
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        text-align: center;
+    }
+
+    .stat-value {
+        font-size: 24px;
+        font-weight: bold;
+        margin: 5px 0;
+    }
+
+    .stat-label {
+        font-size: 14px;
+        color: #666;
+    }
+
+    .stat-present .stat-value {
+        color: #28a745;
+    }
+
+    .stat-absent .stat-value {
+        color: #dc3545;
+    }
+
+    .stat-late .stat-value {
+        color: #ffc107;
+    }
+
+    .stat-half-day .stat-value {
+        color: #17a2b8;
+    }
+
+    .stat-percentage .stat-value {
+        color: #007bff;
+    }
+
+    .attendance-legend {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+    }
+
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .legend-color {
+        width: 20px;
+        height: 20px;
+        border-radius: 4px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-wrapper">
+    <div class="content container-fluid">
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h3 class="page-title">Student Attendance Calendar</h3>
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'core:home' %}">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="{% url 'attendance:list' %}">Student Attendance</a></li>
+                        <li class="breadcrumb-item active">Calendar View</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- /Page Header -->
+
+        <!-- Calendar Filters -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <form method="get" class="calendar-filters">
+                            <div class="row">
+                                <div class="col-md-3 mb-3">
+                                    <label for="view_type" class="form-label">View Type</label>
+                                    <select name="view_type" id="view_type" class="form-control"
+                                        onchange="this.form.submit()">
+                                        <option value="student" {% if view_type=='student' %}selected{% endif %}>Student
+                                            View</option>
+                                        <option value="teacher" {% if view_type=='teacher' %}selected{% endif %}>Teacher
+                                            View</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-3 mb-3 student-filter" {% if view_type=='teacher'
+                                    %}style="display:none;" {% endif %}>
+                                    <div class="form-group">
+                                        <label for="student_id">Select Student</label>
+                                        <select name="student_id" id="student_id" class="form-control" {% if
+                                            view_type=='student' %}required{% endif %}>
+                                            <option value="">-- Select Student --</option>
+                                            {% for student in students %}
+                                            <option value="{{ student.id }}" {% if student.id==selected_id %}selected{%
+                                                endif %}>
+                                                {{ student.first_name }} {{ student.last_name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3 mb-3 teacher-filter" {% if view_type=='student'
+                                    %}style="display:none;" {% endif %}>
+                                    <div class="form-group">
+                                        <label for="teacher_id">Select Teacher</label>
+                                        <select name="teacher_id" id="teacher_id" class="form-control" {% if
+                                            view_type=='teacher' %}required{% endif %}>
+                                            <option value="">-- Select Teacher --</option>
+                                            {% for teacher in teachers %}
+                                            <option value="{{ teacher.id }}" {% if teacher.id==selected_id %}selected{%
+                                                endif %}>
+                                                {{ teacher.first_name }} {{ teacher.last_name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-2 mb-3">
+                                    <div class="form-group">
+                                        <label for="month">Month</label>
+                                        <select name="month" id="month" class="form-control">
+                                            {% for month_num, month_name in months %}
+                                            <option value="{{ month_num }}" {% if month_num==selected_month %}selected{%
+                                                endif %}>
+                                                {{ month_name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-2 mb-3">
+                                    <div class="form-group">
+                                        <label for="year">Year</label>
+                                        <select name="year" id="year" class="form-control">
+                                            {% for year_option in years %}
+                                            <option value="{{ year_option }}" {% if year_option==selected_year
+                                                %}selected{% endif %}>
+                                                {{ year_option }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-2 d-flex align-items-end">
+                                    <button type="submit" class="btn btn-primary me-2">
+                                        <i class="fas fa-filter"></i> Apply
+                                    </button>
+                                    <button type="button" id="reset-filters" class="btn btn-secondary">
+                                        <i class="fas fa-redo"></i> Reset
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Calendar Filters -->
+
+        {% if attendance_data %}
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <!-- Attendance Stats -->
+                        <div class="stats-container">
+                            <div class="stat-card stat-present">
+                                <div class="stat-label">Present</div>
+                                <div class="stat-value">{{ stats.present_count }}</div>
+                                <div class="stat-label">Days</div>
+                            </div>
+                            <div class="stat-card stat-absent">
+                                <div class="stat-label">Absent</div>
+                                <div class="stat-value">{{ stats.absent_count }}</div>
+                                <div class="stat-label">Days</div>
+                            </div>
+                            <div class="stat-card stat-late">
+                                <div class="stat-label">Late</div>
+                                <div class="stat-value">{{ stats.late_count }}</div>
+                                <div class="stat-label">Days</div>
+                            </div>
+                            <div class="stat-card stat-half-day">
+                                <div class="stat-label">Half Day</div>
+                                <div class="stat-value">{{ stats.half_day_count }}</div>
+                                <div class="stat-label">Days</div>
+                            </div>
+                            <div class="stat-card stat-percentage">
+                                <div class="stat-label">Attendance</div>
+                                <div class="stat-value">{{ stats.attendance_percentage }}%</div>
+                                <div class="stat-label">Rate</div>
+                            </div>
+                        </div>
+
+                        <!-- Attendance Legend -->
+                        <div class="attendance-legend">
+                            <div class="legend-item">
+                                <div class="legend-color"
+                                    style="background-color: rgba(40, 167, 69, 0.15); border-left: 4px solid #28a745;">
+                                </div>
+                                <span>Present</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color"
+                                    style="background-color: rgba(220, 53, 69, 0.15); border-left: 4px solid #dc3545;">
+                                </div>
+                                <span>Absent</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color"
+                                    style="background-color: rgba(255, 193, 7, 0.15); border-left: 4px solid #ffc107;">
+                                </div>
+                                <span>Late</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color"
+                                    style="background-color: rgba(23, 162, 184, 0.15); border-left: 4px solid #17a2b8;">
+                                </div>
+                                <span>Half Day</span>
+                            </div>
+                        </div>
+
+                        <!-- Calendar Header -->
+                        <div class="calendar-header">
+                            <div class="calendar-navigation">
+                                <a href="?view_type={{ view_type }}&{% if view_type == 'student' %}student_id={{ selected_id }}{% else %}teacher_id={{ selected_id }}{% endif %}&month={{ prev_month }}&year={{ prev_year }}"
+                                    class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-chevron-left"></i> Previous Month
+                                </a>
+                                <h2 class="month-title">{{ month_name }} {{ selected_year }}</h2>
+                                <a href="?view_type={{ view_type }}&{% if view_type == 'student' %}student_id={{ selected_id }}{% else %}teacher_id={{ selected_id }}{% endif %}&month={{ next_month }}&year={{ next_year }}"
+                                    class="btn btn-sm btn-outline-primary">
+                                    Next Month <i class="fas fa-chevron-right"></i>
+                                </a>
+                            </div>
+                            <div>
+                                {% if view_type == 'student' %}
+                                <span class="badge bg-info">Student: {{ selected_student.user.get_full_name }} ({{
+                                    selected_student.admission_number }})</span>
+                                {% else %}
+                                <span class="badge bg-info">Teacher: {{ selected_teacher.user.get_full_name }} ({{
+                                    selected_teacher.employee_id }})</span>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Calendar Table -->
+                        <table class="calendar-table">
+                            <thead>
+                                <tr>
+                                    <th>Sun</th>
+                                    <th>Mon</th>
+                                    <th>Tue</th>
+                                    <th>Wed</th>
+                                    <th>Thu</th>
+                                    <th>Fri</th>
+                                    <th>Sat</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for week in calendar_data %}
+                                <tr>
+                                    {% for day in week %}
+                                    {% if day.day != 0 %}
+                                    <td
+                                        class="calendar-day {% if day.in_month == False %}outside-month{% endif %} {% if day.today %}today{% endif %} {% if day.status %}attendance-{{ day.status }}{% else %}attendance-unknown{% endif %}">
+                                        <div class="day-number">{{ day.day }}</div>
+                                        {% if day.status %}
+                                        <div class="attendance-badge badge-{{ day.status }}">
+                                            {{ day.status|title }}
+                                        </div>
+                                        {% if day.remarks %}
+                                        <div class="calendar-day-tooltip">
+                                            {{ day.remarks|truncatechars:30 }}
+                                        </div>
+                                        {% endif %}
+                                        {% endif %}
+                                    </td>
+                                    {% else %}
+                                    <td></td>
+                                    {% endif %}
+                                    {% endfor %}
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        {% if selected_id %}
+        <div class="alert alert-info">
+            No attendance records found for the selected {% if view_type == 'student' %}student{% else %}teacher{% endif
+            %} in {{ month_name }} {{ selected_year }}.
+        </div>
+        {% else %}
+        <div class="alert alert-info">
+            Please select a {% if view_type == 'student' %}student{% else %}teacher{% endif %} to view attendance
+            calendar.
+        </div>
+        {% endif %}
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(document).ready(function () {
+        // Initialize select2
+        $('.select2').select2({
+            width: '100%'
+        });
+
+        // Handle view type change
+        $('#view_type').change(function () {
+            var viewType = $(this).val();
+            if (viewType === 'student') {
+                $('.student-filter').show();
+                $('.teacher-filter').hide();
+                $('#student_id').prop('required', true);
+                $('#teacher_id').prop('required', false);
+            } else {
+                $('.student-filter').hide();
+                $('.teacher-filter').show();
+                $('#student_id').prop('required', false);
+                $('#teacher_id').prop('required', true);
+            }
+        });
+
+        // Reset filters
+        $('#reset-filters').click(function () {
+            // Reset select fields to default
+            $('#view_type').val('student').trigger('change');
+            $('#student_id, #teacher_id').val('').trigger('change');
+
+            // Get current month and year
+            const now = new Date();
+            $('#month').val(now.getMonth() + 1);
+            $('#year').val(now.getFullYear());
+
+            // Submit the form
+            $(this).closest('form').submit();
+        });
+    });
+</script>
+{% endblock %}

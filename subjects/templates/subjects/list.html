@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Subjects - School Management System{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="row align-items-center">
+        <div class="col">
+            <h3 class="page-title">Subjects</h3>
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'core:home' %}">Dashboard</a></li>
+                <li class="breadcrumb-item active">Subjects</li>
+            </ul>
+        </div>
+        {% if not is_student and not is_teacher %}
+        <div class="col-auto">
+            <a href="{% url 'subjects:subject_create' %}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Add Subject
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover table-center mb-0">
+                        <thead>
+                            <tr>
+                                <th>Subject Name</th>
+                                <th>Code</th>
+                                <th>Teacher</th>
+                                <th>Credits</th>
+                                <th>Status</th>
+                                {% if not is_student and not is_teacher %}
+                                <th class="text-right">Action</th>
+                                {% endif %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for subject in subjects %}
+                            <tr>
+                                <td>
+                                    <h2 class="table-avatar">
+                                        <a href="{% url 'subjects:subject_detail' subject.pk %}">{{ subject.name }}</a>
+                                    </h2>
+                                </td>
+                                <td>{{ subject.code }}</td>
+                                <td>
+                                    {% if subject.teacher %}
+                                    <a href="{% url 'school_teachers:teacher_detail' subject.teacher.pk %}">
+                                        {{ subject.teacher.full_name }}
+                                    </a>
+                                    {% else %}
+                                    Not Assigned
+                                    {% endif %}
+                                </td>
+                                <td>{{ subject.credits }}</td>
+                                <td>
+                                    {% if subject.is_active %}
+                                    <span class="badge badge-success">Active</span>
+                                    {% else %}
+                                    <span class="badge badge-danger">Inactive</span>
+                                    {% endif %}
+                                </td>
+                                {% if not is_student and not is_teacher %}
+                                <td class="text-right">
+                                    <div class="actions">
+                                        <a href="{% url 'subjects:subject_detail' subject.pk %}"
+                                            class="btn btn-sm bg-info-light">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a href="{% url 'subjects:subject_update' subject.pk %}"
+                                            class="btn btn-sm bg-success-light">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a href="{% url 'subjects:subject_delete' subject.pk %}"
+                                            class="btn btn-sm bg-danger-light">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                                {% endif %}
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="{% if is_student or is_teacher %}5{% else %}6{% endif %}"
+                                    class="text-center">No subjects
+                                    found.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

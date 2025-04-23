@@ -1,0 +1,238 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+{% if is_update %}
+Update {{ document_type.name }} for {{ student.first_name }} {{ student.last_name }}
+{% else %}
+Upload {{ document_type.name }} for {{ student.first_name }} {{ student.last_name }}
+{% endif %}
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .file-upload-container {
+        border: 2px dashed #ccc;
+        padding: 20px;
+        text-align: center;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        transition: all 0.3s ease;
+    }
+
+    .file-upload-container:hover {
+        border-color: #007bff;
+    }
+
+    .preview-container {
+        margin-top: 20px;
+    }
+
+    .preview-container embed {
+        width: 100%;
+        height: 400px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+    }
+
+    .file-info {
+        margin-top: 10px;
+        padding: 10px;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        font-size: 14px;
+    }
+
+    .file-name {
+        font-weight: bold;
+        margin-bottom: 5px;
+        word-break: break-all;
+    }
+
+    .file-size {
+        color: #6c757d;
+    }
+
+    .has-error {
+        border-color: #dc3545;
+    }
+
+    .help-text {
+        margin-top: 10px;
+        font-size: 14px;
+        color: #6c757d;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    {% if is_update %}
+                    Update {{ document_type.name }}
+                    {% else %}
+                    Upload {{ document_type.name }}
+                    {% endif %}
+                </h3>
+            </div>
+            <div class="card-body">
+                <div class="student-info mb-4">
+                    <h5 class="mb-2">Student Information</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p class="mb-1"><strong>Name:</strong> {{ student.first_name }} {{ student.last_name }}</p>
+                            <p class="mb-1"><strong>ID:</strong> {{ student.student_id }}</p>
+                            <p class="mb-1"><strong>Class:</strong> {{ student.class_name }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="mb-1"><strong>Document Type:</strong> {{ document_type.name }}</p>
+                            <p class="mb-1"><strong>Required:</strong> {% if document_type.required %}Yes{% else %}No{% endif %}</p>
+                            {% if document_type.description %}
+                            <p class="mb-1"><strong>Description:</strong> {{ document_type.description }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label for="{{ form.file.id_for_label }}" class="form-label">PDF Document</label>
+                        <div class="file-upload-container {% if form.file.errors %}has-error{% endif %}">
+                            <i class="fas fa-file-pdf fa-3x mb-3 text-primary"></i>
+                            <h5>Drag & drop your PDF file here</h5>
+                            <p>or</p>
+                            {{ form.file }}
+                            <p class="help-text">Maximum file size: 250 KB. Only PDF files are allowed.</p>
+                            {% if form.file.errors %}
+                            <div class="text-danger mt-2">
+                                {{ form.file.errors }}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.notes.id_for_label }}" class="form-label">Notes</label>
+                        {{ form.notes }}
+                        {% if form.notes.errors %}
+                        <div class="text-danger mt-2">
+                            {{ form.notes.errors }}
+                        </div>
+                        {% endif %}
+                        <div class="form-text">Add any notes about this document.</div>
+                    </div>
+
+                    <!-- {% if is_update and document.file %}
+                    <div class="preview-container">
+                        <h5>Current Document</h5>
+                        <embed src="{{ document.file.url }}" type="application/pdf" />
+                        <div class="file-info">
+                            <div class="file-name">{{ document.filename }}</div>
+                            <div class="file-size">
+                                Uploaded: {{ document.created_at|date:"M d, Y H:i" }}
+                                {% if document.uploaded_by %}
+                                by {{ document.uploaded_by.username }}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %} -->
+
+                    <div class="d-flex justify-content-between mt-4">
+                        <a href="{% url 'documents:document_matrix' %}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Back to Matrix
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            {% if is_update %}
+                            <i class="fas fa-save"></i> Update Document
+                            {% else %}
+                            <i class="fas fa-upload"></i> Upload Document
+                            {% endif %}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const fileInput = document.getElementById('{{ form.file.id_for_label }}');
+        const fileContainer = document.querySelector('.file-upload-container');
+
+        // Drag and drop functionality
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            fileContainer.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            fileContainer.addEventListener(eventName, highlight, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            fileContainer.addEventListener(eventName, unhighlight, false);
+        });
+
+        function highlight() {
+            fileContainer.classList.add('bg-light');
+        }
+
+        function unhighlight() {
+            fileContainer.classList.remove('bg-light');
+        }
+
+        fileContainer.addEventListener('drop', handleDrop, false);
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            fileInput.files = files;
+
+            // Optional: Display file info
+            if (files.length > 0) {
+                const file = files[0];
+                validateFile(file);
+            }
+        }
+
+        // File validation
+        fileInput.addEventListener('change', function (e) {
+            if (this.files.length > 0) {
+                const file = this.files[0];
+                validateFile(file);
+            }
+        });
+
+        function validateFile(file) {
+            // Check file type
+            const fileType = file.type;
+            if (fileType !== 'application/pdf') {
+                alert('Only PDF files are allowed.');
+                fileInput.value = '';
+                return;
+            }
+
+            // Check file size (250 KB)
+            const maxSize = 250 * 1024;
+            if (file.size > maxSize) {
+                alert('File size must be less than 250 KB.');
+                fileInput.value = '';
+                return;
+            }
+        }
+    });
+</script>
+{% endblock %}

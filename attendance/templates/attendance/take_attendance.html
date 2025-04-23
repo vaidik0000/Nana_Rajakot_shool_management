@@ -1,0 +1,181 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Take Attendance{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3 class="page-title">Take Attendance</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'core:home' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'attendance:list' %}">Attendance</a></li>
+                    <li class="breadcrumb-item active">Take Attendance</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    {% if messages %}
+                    <div class="messages">
+                        {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <form method="post" id="attendanceForm" class="needs-validation" novalidate>
+                        {% csrf_token %}
+
+                        <div class="row mb-4">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="id_class_name" class="form-label">Class</label>
+                                    <select name="class_name" id="id_class_name" class="form-select" required
+                                        onchange="this.form.submit()">
+                                        <option value="">Select Class</option>
+                                        {% for class_name in class_names %}
+                                        <option value="{{ class_name.0 }}" {% if selected_class == class_name.0 %}selected{% endif %}>{{ class_name.1 }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <div class="invalid-feedback">Please select a class.</div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="id_date" class="form-label">Date</label>
+                                    <input type="date" name="date" id="id_date" class="form-control" required
+                                        value="{{ date_value|default:'' }}">
+                                    <div class="invalid-feedback">Please select a date.</div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="id_remarks" class="form-label">Remarks</label>
+                                    <input type="text" name="remarks" id="id_remarks" class="form-control"
+                                        value="{{ remarks|default:'' }}">
+                                </div>
+                            </div>
+                        </div>
+
+                        {% if students %}
+                        <div class="table-responsive mb-4">
+                            <table class="table table-bordered" id="attendanceTable">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th>Student Name</th>
+                                        <th>Roll Number</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="studentList">
+                                    {% for student in students %}
+                                    <tr>
+                                        <td>{{ student.first_name }} {{ student.last_name }}</td>
+                                        <td>{{ student.roll_number }}</td>
+                                        <td>
+                                            <div class="btn-group" role="group">
+                                                <input type="radio" class="btn-check" name="status_{{ student.id }}"
+                                                    id="present_{{ student.id }}" value="present" required>
+                                                <label class="btn btn-outline-success"
+                                                    for="present_{{ student.id }}">Present</label>
+
+                                                <input type="radio" class="btn-check" name="status_{{ student.id }}"
+                                                    id="absent_{{ student.id }}" value="absent">
+                                                <label class="btn btn-outline-danger"
+                                                    for="absent_{{ student.id }}">Absent</label>
+
+                                                <input type="radio" class="btn-check" name="status_{{ student.id }}"
+                                                    id="late_{{ student.id }}" value="late">
+                                                <label class="btn btn-outline-warning"
+                                                    for="late_{{ student.id }}">Late</label>
+
+                                                <input type="radio" class="btn-check" name="status_{{ student.id }}"
+                                                    id="halfday_{{ student.id }}" value="half_day">
+                                                <label class="btn btn-outline-info" for="halfday_{{ student.id }}">Half
+                                                    Day</label>
+
+                                                <input type="hidden" name="student_ids" value="{{ student.id }}">
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12">
+                                <button type="submit" name="submit_attendance" class="btn btn-primary"
+                                    id="submitBtn">Submit Attendance</button>
+                                <a href="{% url 'attendance:list' %}" class="btn btn-secondary">Cancel</a>
+                            </div>
+                        </div>
+                        {% else %}
+                        {% if selected_class %}
+                        <div class="alert alert-info">
+                            No students found in this class. Please select a different class.
+                        </div>
+                        {% endif %}
+                        {% endif %}
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById('attendanceForm');
+        const submitBtn = document.getElementById('submitBtn');
+
+        // Form validation
+        form.addEventListener('submit', function (event) {
+            // Only validate if the submit button was clicked (not class selection change)
+            if (event.submitter && event.submitter.name === 'submit_attendance') {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+
+                // Check if all students have attendance marked
+                const studentRows = document.querySelectorAll('#studentList tr');
+                let allMarked = true;
+
+                studentRows.forEach(row => {
+                    const studentId = row.querySelector('input[type="hidden"]').value;
+                    const radioButtons = row.querySelectorAll(`input[name="status_${studentId}"]:checked`);
+
+                    if (radioButtons.length === 0) {
+                        allMarked = false;
+                    }
+                });
+
+                if (!allMarked && studentRows.length > 0) {
+                    event.preventDefault();
+                    alert('Please mark attendance for all students.');
+                }
+
+                form.classList.add('was-validated');
+            }
+        });
+    });
+</script>
+{% endblock %}

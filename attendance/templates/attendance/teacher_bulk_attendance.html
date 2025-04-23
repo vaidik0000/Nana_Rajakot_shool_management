@@ -1,0 +1,176 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Bulk Teacher Attendance{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3 class="page-title">Bulk Teacher Attendance</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'core:home' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'attendance:teacher_attendance_list' %}">Teacher
+                            Attendance</a></li>
+                    <li class="breadcrumb-item active">Bulk Attendance</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Record Multiple Teacher Attendance</h5>
+                </div>
+                <div class="card-body">
+                    {% if messages %}
+                    <div class="messages mb-4">
+                        {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <div class="alert alert-info mb-4">
+                        <p class="mb-0">This feature allows you to mark attendance with the same status for multiple
+                            teachers at once.</p>
+                    </div>
+
+                    <form method="post" id="bulkTeacherAttendanceForm" class="needs-validation" novalidate>
+                        {% csrf_token %}
+
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">Select Teachers</label>
+                                    <select name="teacher_ids" id="teacher_ids" class="form-control select2" multiple
+                                        required>
+                                        {% for teacher in teachers %}
+                                        <option value="{{ teacher.id }}">{{ teacher.full_name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <div class="invalid-feedback">Please select at least one teacher.</div>
+                                    <div class="mt-2">
+                                        <button type="button" class="btn btn-sm btn-outline-primary"
+                                            id="selectAllTeachers">Select All</button>
+                                        <button type="button" class="btn btn-sm btn-outline-secondary"
+                                            id="deselectAllTeachers">Deselect All</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="date" class="form-label">Date <span class="text-danger">*</span></label>
+                                    <input type="date" name="date" id="date" class="form-control" required
+                                        value="{{ today|date:'Y-m-d' }}">
+                                    <div class="invalid-feedback">Please select a date.</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">Status for Selected Teachers <span
+                                            class="text-danger">*</span></label>
+                                    <div class="status-options">
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="status"
+                                                id="status_present" value="present" required>
+                                            <label class="form-check-label" for="status_present">Present</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="status"
+                                                id="status_absent" value="absent">
+                                            <label class="form-check-label" for="status_absent">Absent</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="status" id="status_late"
+                                                value="late">
+                                            <label class="form-check-label" for="status_late">Late</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="status"
+                                                id="status_half_day" value="half_day">
+                                            <label class="form-check-label" for="status_half_day">Half Day</label>
+                                        </div>
+                                    </div>
+                                    <div class="invalid-feedback">Please select an attendance status.</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="remarks" class="form-label">Remarks (Optional)</label>
+                                    <textarea name="remarks" id="remarks" class="form-control" rows="3"
+                                        placeholder="Optional remarks for all selected teachers"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary">Submit Bulk Attendance</button>
+                                <a href="{% url 'attendance:teacher_attendance_list' %}"
+                                    class="btn btn-secondary">Cancel</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Initialize Select2 for teacher multiselect
+        if ($.fn.select2) {
+            $('.select2').select2({
+                width: '100%',
+                placeholder: 'Select teachers'
+            });
+        }
+
+        // Select/Deselect all teachers
+        document.getElementById('selectAllTeachers').addEventListener('click', function () {
+            $("#teacher_ids > option").prop("selected", true);
+            $("#teacher_ids").trigger("change");
+        });
+
+        document.getElementById('deselectAllTeachers').addEventListener('click', function () {
+            $("#teacher_ids > option").prop("selected", false);
+            $("#teacher_ids").trigger("change");
+        });
+
+        // Form validation
+        const form = document.getElementById('bulkTeacherAttendanceForm');
+
+        form.addEventListener('submit', function (event) {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+
+                // Custom validation messages
+                if (!$('#teacher_ids').val() || $('#teacher_ids').val().length === 0) {
+                    alert('Please select at least one teacher.');
+                } else if (!$('input[name="status"]:checked').val()) {
+                    alert('Please select an attendance status.');
+                }
+            }
+
+            form.classList.add('was-validated');
+        });
+    });
+</script>
+{% endblock %}

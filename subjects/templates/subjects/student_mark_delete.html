@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Delete Student Mark - School Management System{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="row align-items-center">
+        <div class="col">
+            <h3 class="page-title">Delete Student Mark</h3>
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'core:home' %}">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'subjects:subject_list' %}">Subjects</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'subjects:student_marks' %}">Student Marks</a></li>
+                <li class="breadcrumb-item active">Delete Student Mark</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="card">
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="text-center">
+                        <h4>Are you sure you want to delete this student mark?</h4>
+                        <p class="text-muted">
+                            Student: {{ student_mark.student.first_name }} {{ student_mark.student.last_name }}<br>
+                            Subject: {{ student_mark.subject.name }}<br>
+                            Marks: {{ student_mark.marks_obtained }}/{{ student_mark.total_marks }}<br>
+                            Percentage: {{ student_mark.percentage }}%<br>
+                            Grade:
+                            <span
+                                class="badge {% if student_mark.grade == 'A+' %}badge-success{% elif student_mark.grade == 'A' %}badge-success{% elif student_mark.grade == 'B' %}badge-info{% elif student_mark.grade == 'C' %}badge-warning{% elif student_mark.grade == 'D' %}badge-warning{% else %}badge-danger{% endif %}">
+                                {{ student_mark.grade }}
+                            </span>
+                        </p>
+                        <p class="text-danger">This action cannot be undone.</p>
+                    </div>
+                    <div class="text-center mt-4">
+                        <a href="{% url 'subjects:student_marks' %}" class="btn btn-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

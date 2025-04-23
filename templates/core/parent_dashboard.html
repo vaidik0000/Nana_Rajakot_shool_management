@@ -1,0 +1,517 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load core_extras %}
+
+{% block title %}Parent Dashboard - School Management System{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12 col-lg-8 col-xl-9">
+        <!-- Welcome Banner -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card text-white mb-4"
+                    style="background: linear-gradient(135deg, #43a047, #66bb6a); box-shadow: 0 8px 16px rgba(0,0,0,0.15); border: none; border-radius: 0.75rem; position: relative; overflow: hidden;">
+                    <div
+                        style="position: absolute; top: -25px; right: -15px; font-size: 7rem; opacity: 0.1; transform: rotate(15deg);">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="card-body" style="padding: 1.5rem; position: relative; z-index: 1;">
+                        <div class="d-flex align-items-center">
+                            <div class="avatar avatar-xl me-3">
+                                {% if parent.profile_picture %}
+                                <img src="{{ parent.profile_picture.url }}" alt="{{ parent.first_name }}"
+                                    class="avatar-img rounded-circle">
+                                {% else %}
+                                <div class="avatar-title rounded-circle bg-light text-primary">
+                                    {{ parent.first_name|slice:":1" }}{{ parent.last_name|slice:":1" }}
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div>
+                                <h4 class="text-white mb-1"
+                                    style="font-weight: 700; letter-spacing: 0.5px; text-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+                                    Welcome, {{ parent.first_name }} {{ parent.last_name }}!
+                                </h4>
+                                <p class="mb-0" style="opacity: 0.9; letter-spacing: 0.3px;">Parent | ID: {{
+                                    parent.parent_id }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Children Section -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-child me-2"></i> My Children
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        {% if children %}
+                        <div class="row">
+                            {% for child in children %}
+                            <div class="col-md-6 mb-4">
+                                <div class="card h-100 border">
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-center mb-3">
+                                            <div class="avatar me-3">
+                                                {% if child.profile_picture %}
+                                                <img src="{{ child.profile_picture.url }}" alt="{{ child.first_name }}"
+                                                    class="avatar-img rounded-circle" width="64" height="64">
+                                                {% else %}
+                                                <div class="avatar-title rounded-circle bg-primary text-white"
+                                                    style="width: 64px; height: 64px;">
+                                                    {{ child.first_name|slice:":1" }}{{ child.last_name|slice:":1" }}
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                            <div>
+                                                <h5 class="mb-0">{{ child.first_name }} {{ child.last_name }}</h5>
+                                                <p class="text-muted mb-0">Class {{ child.class_name }} | Roll: {{
+                                                    child.roll_number }}</p>
+                                            </div>
+                                        </div>
+
+                                        <div class="row mb-2">
+                                            <div class="col-6">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="icon bg-primary-light text-primary me-2 p-2 rounded">
+                                                        <i class="fas fa-clipboard-check"></i>
+                                                    </div>
+                                                    <div>
+                                                        <span class="text-muted small">Attendance</span>
+                                                        <h6 class="mb-0">{{ child.attendance.percentage|floatformat:1
+                                                            }}%</h6>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="icon bg-success-light text-success me-2 p-2 rounded">
+                                                        <i class="fas fa-chart-line"></i>
+                                                    </div>
+                                                    <div>
+                                                        <span class="text-muted small">Performance</span>
+                                                        <h6 class="mb-0">{{ child.performance.average|floatformat:1 }}%
+                                                        </h6>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="mt-3">
+                                            <a href="{% url 'students:student_detail' child.id %}"
+                                                class="btn btn-sm btn-primary me-2">View Details</a>
+                                            <a href="{% url 'subjects:student_marks' %}?student_id={{ child.id }}"
+                                                class="btn btn-sm btn-outline-secondary">Marks</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-child fa-3x text-muted mb-3"></i>
+                            <p class="mb-0">No children registered in the system</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Academic Progress -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-chart-bar me-2"></i> Academic Progress
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        {% if children %}
+                        <ul class="nav nav-tabs" id="progressTabs" role="tablist">
+                            {% for child in children %}
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link {% if forloop.first %}active{% endif %}"
+                                    id="child-{{ child.id }}-tab" data-bs-toggle="tab"
+                                    data-bs-target="#child-{{ child.id }}" type="button" role="tab"
+                                    aria-controls="child-{{ child.id }}"
+                                    aria-selected="{% if forloop.first %}true{% else %}false{% endif %}">
+                                    {{ child.first_name }}
+                                </button>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                        <div class="tab-content mt-3" id="progressTabContent">
+                            {% for child in children %}
+                            <div class="tab-pane fade {% if forloop.first %}show active{% endif %}"
+                                id="child-{{ child.id }}" role="tabpanel" aria-labelledby="child-{{ child.id }}-tab">
+
+                                {% if child.subjects %}
+                                <div class="row">
+                                    {% for subject_data in child.subjects %}
+                                    <div class="col-md-6 col-lg-4 mb-3">
+                                        <div class="card h-100 border">
+                                            <div class="card-body">
+                                                <h6 class="card-title">{{ subject_data.subject.name }}</h6>
+                                                <p class="text-muted small mb-2">{{ subject_data.subject.code }}</p>
+
+                                                <div class="progress mb-3" style="height: 10px;">
+                                                    <div class="progress-bar 
+                                                        {% if subject_data.average >= 80 %}bg-success
+                                                        {% elif subject_data.average >= 60 %}bg-info
+                                                        {% elif subject_data.average >= 40 %}bg-warning
+                                                        {% else %}bg-danger{% endif %}" role="progressbar"
+                                                        style="width: {{ subject_data.average }}%;"
+                                                        aria-valuenow="{{ subject_data.average }}" aria-valuemin="0"
+                                                        aria-valuemax="100">
+                                                    </div>
+                                                </div>
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <span class="fw-bold">
+                                                        {{ subject_data.average|floatformat:1 }}%
+                                                    </span>
+                                                    <span class="badge 
+                                                        {% if subject_data.average >= 80 %}bg-success
+                                                        {% elif subject_data.average >= 60 %}bg-info
+                                                        {% elif subject_data.average >= 40 %}bg-warning
+                                                        {% else %}bg-danger{% endif %}">
+                                                        {% if subject_data.average >= 90 %}A+
+                                                        {% elif subject_data.average >= 80 %}A
+                                                        {% elif subject_data.average >= 70 %}B+
+                                                        {% elif subject_data.average >= 60 %}B
+                                                        {% elif subject_data.average >= 50 %}C+
+                                                        {% elif subject_data.average >= 40 %}C
+                                                        {% else %}F{% endif %}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                                {% else %}
+                                <div class="text-center py-4">
+                                    <p class="mb-0">No subject data available for {{ child.first_name }}</p>
+                                </div>
+                                {% endif %}
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <div class="text-center py-4">
+                            <p class="mb-0">No academic data available</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Marks -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-graduation-cap me-2"></i> Recent Marks
+                        </h5>
+                        <a href="{% url 'subjects:student_marks' %}" class="btn btn-sm btn-outline-primary">
+                            All Marks
+                        </a>
+                    </div>
+                    <div class="card-body">
+                        {% if recent_marks %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Child</th>
+                                        <th>Subject</th>
+                                        <th>Marks</th>
+                                        <th>Grade</th>
+                                        <th>Remarks</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for mark in recent_marks %}
+                                    <tr>
+                                        <td>{{ mark.date|date:"d M Y" }}</td>
+                                        <td>{{ mark.student.first_name }}</td>
+                                        <td>{{ mark.subject.name }}</td>
+                                        <td>{{ mark.marks_obtained }}/{{ mark.total_marks }} ({{ mark.percentage }}%)
+                                        </td>
+                                        <td>
+                                            <span class="badge 
+                                                {% if mark.grade == 'A+' or mark.grade == 'A' %}bg-success
+                                                {% elif mark.grade == 'B+' or mark.grade == 'B' %}bg-info
+                                                {% elif mark.grade == 'C+' or mark.grade == 'C' %}bg-warning
+                                                {% else %}bg-danger{% endif %}">
+                                                {{ mark.grade }}
+                                            </span>
+                                        </td>
+                                        <td>{{ mark.remarks|default:"No remarks" }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-chart-bar fa-3x text-muted mb-3"></i>
+                            <p class="mb-0">No recent marks available</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Sidebar -->
+    <div class="col-12 col-lg-4 col-xl-3">
+        <!-- Upcoming Events Card -->
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="fas fa-calendar-alt me-2"></i> Upcoming Events
+                </h5>
+                <a href="{% url 'events:event_list' %}" class="btn btn-sm btn-outline-primary">All</a>
+            </div>
+            <div class="card-body">
+                {% if upcoming_events %}
+                <div>
+                    {% for event in upcoming_events %}
+                    <div class="event-item mb-3">
+                        <div class="event-date">
+                            <span class="month">{{ event.start_date|date:"M" }}</span>
+                            <span class="day">{{ event.start_date|date:"d" }}</span>
+                        </div>
+                        <div class="event-content">
+                            <h6 class="mb-1">{{ event.title }}</h6>
+                            <p class="text-muted small mb-0">
+                                <i class="fas fa-tag me-1"></i> {{ event.get_event_type_display }}
+                                {% if event.location %}
+                                <br><i class="fas fa-map-marker-alt me-1"></i> {{ event.location }}
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <img src="{% static 'assets/img/icons/no-events.svg' %}" alt="No events" class="mb-3" width="96">
+                    <p class="mb-0">No upcoming events</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Fee Status Card -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-money-bill-wave me-2"></i> Fee Status
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if children %}
+                <div class="list-group">
+                    {% for child in children %}
+                    <div class="list-group-item">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h6 class="mb-0">{{ child.first_name }} {{ child.last_name }}</h6>
+                            <span
+                                class="badge {% if child.fee_status == 'paid' %}bg-success{% elif child.fee_status == 'partial' %}bg-warning{% else %}bg-danger{% endif %}">
+                                {{ child.fee_status|title }}
+                            </span>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center text-muted small">
+                            <span>Total Fees: ₹{{ child.fee_data.total_fees|floatformat:2 }}</span>
+                            <span>Paid: ₹{{ child.fee_data.total_paid|floatformat:2 }}</span>
+                        </div>
+
+                        {% if child.fee_data.due_amount > 0 %}
+                        <div class="alert alert-warning py-1 px-2 mt-2 mb-0">
+                            <small><i class="fas fa-exclamation-triangle me-1"></i> Due: ₹{{
+                                child.fee_data.due_amount|floatformat:2 }}</small>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <div class="mt-3">
+                    <a href="{% url 'fees:fee_payment_create' %}" class="btn btn-sm btn-primary">Make Payment</a>
+                    <a href="{% url 'fees:fee_payment_list' %}" class="btn btn-sm btn-outline-secondary">History</a>
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <p class="mb-0">No fee information available</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Teacher Communication Card -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-comments me-2"></i> Teacher Communication
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if teachers %}
+                <div class="list-group">
+                    {% for teacher in teachers %}
+                    <div class="list-group-item">
+                        <div class="d-flex align-items-center">
+                            <div class="avatar me-3">
+                                {% if teacher.profile_picture %}
+                                <img src="{{ teacher.profile_picture.url }}" alt="{{ teacher.first_name }}"
+                                    class="avatar-img rounded-circle" width="48" height="48">
+                                {% else %}
+                                <div class="avatar-title rounded-circle bg-primary text-white"
+                                    style="width: 48px; height: 48px;">
+                                    {{ teacher.first_name|slice:":1" }}{{ teacher.last_name|slice:":1" }}
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div>
+                                <h6 class="mb-0">{{ teacher.first_name }} {{ teacher.last_name }}</h6>
+                                <p class="text-muted small mb-0">{{ teacher.specialization }}</p>
+                            </div>
+                        </div>
+                        <div class="mt-2">
+                            <a href="{% url 'messages:compose' %}?recipient={{ teacher.id }}"
+                                class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-envelope me-1"></i> Send Message
+                            </a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <p class="mb-0">No teachers assigned yet</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Quick Links Card -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-link me-2"></i> Quick Links
+                </h5>
+            </div>
+            <div class="card-body p-0">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        <a href="{% url 'attendance:list' %}" class="d-flex align-items-center">
+                            <i class="fas fa-clipboard-check me-2 text-primary"></i>
+                            <span>Attendance Records</span>
+                        </a>
+                    </li>
+                    <li class="list-group-item">
+                        <a href="{% url 'fees:fee_payment_create' %}" class="d-flex align-items-center">
+                            <i class="fas fa-credit-card me-2 text-success"></i>
+                            <span>Pay Fees</span>
+                        </a>
+                    </li>
+                    <li class="list-group-item">
+                        <a href="{% url 'timetable:class_timetable' %}" class="d-flex align-items-center">
+                            <i class="fas fa-calendar-alt me-2 text-info"></i>
+                            <span>Class Timetable</span>
+                        </a>
+                    </li>
+                    <li class="list-group-item">
+                        <a href="{% url 'messages:inbox' %}" class="d-flex align-items-center">
+                            <i class="fas fa-inbox me-2 text-warning"></i>
+                            <span>Message Inbox</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block custom_css %}
+<style>
+    .event-item {
+        display: flex;
+        align-items: flex-start;
+    }
+
+    .event-date {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 50px;
+        height: 50px;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        margin-right: 15px;
+    }
+
+    .event-date .month {
+        font-size: 12px;
+        text-transform: uppercase;
+        color: #6c757d;
+    }
+
+    .event-date .day {
+        font-size: 18px;
+        font-weight: bold;
+        color: #212529;
+    }
+
+    .event-content {
+        flex: 1;
+    }
+
+    .icon {
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 4px;
+    }
+
+    .bg-primary-light {
+        background-color: rgba(13, 110, 253, 0.1);
+    }
+
+    .bg-success-light {
+        background-color: rgba(25, 135, 84, 0.1);
+    }
+
+    .bg-warning-light {
+        background-color: rgba(255, 193, 7, 0.1);
+    }
+
+    .bg-danger-light {
+        background-color: rgba(220, 53, 69, 0.1);
+    }
+
+    .bg-info-light {
+        background-color: rgba(13, 202, 240, 0.1);
+    }
+</style>
+{% endblock %}

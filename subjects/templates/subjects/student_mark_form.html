@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ title }} - School Management System{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="row align-items-center">
+        <div class="col">
+            <h3 class="page-title">{{ title }}</h3>
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'core:home' %}">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'subjects:subject_list' %}">Subjects</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'subjects:student_marks' %}">Student Marks</a></li>
+                <li class="breadcrumb-item active">{{ title }}</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="card">
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+
+                    {% if form.errors %}
+                    <div class="alert alert-danger">
+                        Please correct the errors below.
+                    </div>
+                    {% endif %}
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Student <span class="text-danger">*</span></label>
+                                {{ form.student }}
+                                {% if form.student.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.student.errors.0 }}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Subject <span class="text-danger">*</span></label>
+                                {{ form.subject }}
+                                {% if form.subject.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.subject.errors.0 }}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Teacher <span class="text-danger">*</span></label>
+                                {{ form.teacher }}
+                                {% if form.teacher.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.teacher.errors.0 }}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Date <span class="text-danger">*</span></label>
+                                {{ form.date }}
+                                {% if form.date.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.date.errors.0 }}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Marks Obtained <span class="text-danger">*</span></label>
+                                {{ form.marks_obtained }}
+                                {% if form.marks_obtained.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.marks_obtained.errors.0 }}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Total Marks <span class="text-danger">*</span></label>
+                                {{ form.total_marks }}
+                                {% if form.total_marks.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.total_marks.errors.0 }}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Remarks</label>
+                        {{ form.remarks }}
+                        {% if form.remarks.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ form.remarks.errors.0 }}
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="text-right mt-4">
+                        <a href="{% url 'subjects:student_marks' %}" class="btn btn-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

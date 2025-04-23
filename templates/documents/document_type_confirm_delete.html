@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Delete Document Type{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-danger text-white">
+                <h3 class="card-title">Confirm Deletion</h3>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span class="ms-2">Warning: This action cannot be undone!</span>
+                </div>
+
+                <p class="mb-4">Are you sure you want to delete the document type <strong>"{{ object.name }}"</strong>?
+                </p>
+
+                {% if object.studentdocument_set.exists %}
+                <div class="alert alert-danger">
+                    <i class="fas fa-times-circle"></i>
+                    <span class="ms-2">
+                        This document type cannot be deleted because it is currently in use by students.
+                        Please consider deactivating it instead.
+                    </span>
+                </div>
+                {% endif %}
+
+                <div class="d-flex justify-content-between mt-4">
+                    <a href="{% url 'documents:document_type_list' %}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Cancel
+                    </a>
+
+                    <form method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger" {% if object.studentdocument_set.exists %}disabled{% endif %}>
+                            <i class="fas fa-trash"></i> Delete Document Type
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

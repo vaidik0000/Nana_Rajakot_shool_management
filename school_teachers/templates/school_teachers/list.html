@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Teachers - School Management System{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="row align-items-center">
+        <div class="col">
+            <h3 class="page-title">Teachers</h3>
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'core:home' %}">Dashboard</a></li>
+                <li class="breadcrumb-item active">Teachers</li>
+            </ul>
+        </div>
+        <div class="col-auto text-end float-end ms-auto">
+            <a href="{% url 'school_teachers:generate_all_teachers_pdf' %}" class="btn btn-info me-2">
+                <i class="fas fa-file-pdf"></i> Download All PDF
+            </a>
+            {% if not request.user_type == 'teacher' %}
+            <a href="{% url 'school_teachers:teacher_create' %}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Add Teacher
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover table-center mb-0">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Employee ID</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Specialization</th>
+                                <th>Status</th>
+                                {% if not request.user_type == 'teacher' %}
+                                <th class="text-right">Action</th>
+                                {% endif %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for teacher in teachers %}
+                            <tr>
+                                <td>{{ teacher.id }}</td>
+                                <td>
+                                    <h2 class="table-avatar">
+                                        {% if teacher.profile_picture %}
+                                        <a href="{% url 'school_teachers:teacher_detail' teacher.pk %}"
+                                            class="avatar avatar-sm mr-2">
+                                            <img class="avatar-img rounded-circle"
+                                                src="{{ teacher.profile_picture.url }}" alt="Teacher Image">
+                                        </a>
+                                        {% endif %}
+                                        <a href="{% url 'school_teachers:teacher_detail' teacher.pk %}">
+                                            {{ teacher.first_name }} {{ teacher.last_name }}
+                                        </a>
+                                    </h2>
+                                </td>
+                                <td>{{ teacher.employee_id }}</td>
+                                <td>{{ teacher.email }}</td>
+                                <td>{{ teacher.phone_number }}</td>
+                                <td>{{ teacher.specialization }}</td>
+                                <td>
+                                    {% if teacher.is_active %}
+                                    <span class="badge badge-success">Active</span>
+                                    {% else %}
+                                    <span class="badge badge-danger">Inactive</span>
+                                    {% endif %}
+                                </td>
+                                {% if not request.user_type == 'teacher' %}
+                                <td class="text-right">
+                                    <div class="actions">
+                                        <a href="{% url 'school_teachers:teacher_detail' teacher.pk %}"
+                                            class="btn btn-sm bg-info-light">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a href="{% url 'school_teachers:generate_teacher_pdf' teacher.pk %}"
+                                            class="btn btn-sm bg-warning-light">
+                                            <i class="fas fa-file-pdf"></i>
+                                        </a>
+                                        <a href="{% url 'school_teachers:teacher_update' teacher.pk %}"
+                                            class="btn btn-sm bg-success-light">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a href="{% url 'school_teachers:teacher_delete' teacher.pk %}"
+                                            class="btn btn-sm bg-danger-light">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                                {% endif %}
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="{% if request.user_type == 'teacher' %}7{% else %}8{% endif %}"
+                                    class="text-center">No teachers found.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

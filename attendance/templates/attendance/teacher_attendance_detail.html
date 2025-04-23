@@ -1,0 +1,166 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Teacher Attendance Details{% endblock %}
+
+{% block content %}
+<div class="page-wrapper">
+    <div class="content container-fluid">
+
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="row">
+                <div class="col-sm-12">
+                    <h3 class="page-title">Attendance Details</h3>
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'core:home' %}">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="{% url 'attendance:teacher_attendance_list' %}">Teacher
+                                Attendance</a></li>
+                        <li class="breadcrumb-item active">Attendance Details</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- /Page Header -->
+
+        {% if messages %}
+        <div class="row">
+            <div class="col-md-12">
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title mb-0">Teacher Attendance Information</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="profile-view">
+                                    <div class="profile-img-wrap">
+                                        <div class="profile-img">
+                                            {% if attendance.teacher.profile_image %}
+                                            <a href="#"><img src="{{ attendance.teacher.profile_image.url }}"
+                                                    alt="{{ attendance.teacher.first_name }} {{ attendance.teacher.last_name }}"></a>
+                                            {% else %}
+                                            <a href="#"><img src="{% static 'assets/img/profiles/avatar-02.jpg' %}"
+                                                    alt="Default Profile"></a>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="profile-basic">
+                                        <div class="row">
+                                            <div class="col-md-5">
+                                                <div class="profile-info-left">
+                                                    <h3 class="user-name m-t-0 mb-0">{{ attendance.teacher.first_name }}
+                                                        {{ attendance.teacher.last_name }}</h3>
+                                                    <h6 class="text-muted">{{ attendance.teacher.department|default:""
+                                                        }}</h6>
+                                                    {% if attendance.teacher.employee_id %}
+                                                    <small class="text-muted">Employee ID: {{
+                                                        attendance.teacher.employee_id }}</small><br>
+                                                    {% endif %}
+                                                    {% if attendance.teacher.email %}
+                                                    <small class="text-muted">Email: {{ attendance.teacher.email
+                                                        }}</small><br>
+                                                    {% endif %}
+                                                    {% if attendance.teacher.phone_number %}
+                                                    <small class="text-muted">Phone: {{ attendance.teacher.phone_number
+                                                        }}</small>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                            <div class="col-md-7">
+                                                <ul class="personal-info">
+                                                    <li>
+                                                        <div class="title">Date:</div>
+                                                        <div class="text">{{ attendance.date }}</div>
+                                                    </li>
+                                                    <li>
+                                                        <div class="title">Status:</div>
+                                                        <div class="text">
+                                                            {% if attendance.status == 'present' %}
+                                                            <span class="badge bg-success">Present</span>
+                                                            {% elif attendance.status == 'absent' %}
+                                                            <span class="badge bg-danger">Absent</span>
+                                                            {% elif attendance.status == 'late' %}
+                                                            <span class="badge bg-warning">Late</span>
+                                                            {% elif attendance.status == 'half_day' %}
+                                                            <span class="badge bg-info">Half Day</span>
+                                                            {% endif %}
+                                                        </div>
+                                                    </li>
+                                                    <li>
+                                                        <div class="title">Recorded By:</div>
+                                                        <div class="text">
+                                                            {% if attendance.recorded_by %}
+                                                            {% if attendance.recorded_by.first_name %}
+                                                            {{ attendance.recorded_by.first_name }} {{
+                                                            attendance.recorded_by.last_name }}
+                                                            {% else %}
+                                                            {{ attendance.recorded_by.username }}
+                                                            {% endif %}
+                                                            {% else %}
+                                                            Admin
+                                                            {% endif %}
+                                                        </div>
+                                                    </li>
+                                                    <li>
+                                                        <div class="title">Recorded On:</div>
+                                                        <div class="text">{{ attendance.created_at|date:"d M Y, h:i A"
+                                                            }}</div>
+                                                    </li>
+                                                    {% if attendance.remarks %}
+                                                    <li>
+                                                        <div class="title">Remarks:</div>
+                                                        <div class="text">{{ attendance.remarks }}</div>
+                                                    </li>
+                                                    {% endif %}
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <div class="card">
+                    <div class="card-body">
+                        {% if not is_student %}
+                        <a href="{% url 'attendance:teacher_attendance_edit' attendance.id %}"
+                            class="btn btn-primary m-r-5">
+                            <i class="fa fa-pencil m-r-5"></i> Edit Attendance
+                        </a>
+                        <a href="{% url 'attendance:teacher_attendance_delete' attendance.id %}"
+                            class="btn btn-danger m-r-5">
+                            <i class="fa fa-trash-o m-r-5"></i> Delete Attendance
+                        </a>
+                        {% endif %}
+                        <a href="{% url 'attendance:teacher_attendance_list' %}" class="btn btn-secondary">
+                            <i class="fa fa-arrow-left m-r-5"></i> Back to List
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

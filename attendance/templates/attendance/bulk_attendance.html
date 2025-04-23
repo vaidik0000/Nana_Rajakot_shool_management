@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Bulk Attendance{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3 class="page-title">Bulk Attendance</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'core:home' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'attendance:list' %}">Attendance</a></li>
+                    <li class="breadcrumb-item active">Bulk Attendance</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    {% if messages %}
+                    <div class="messages">
+                        {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <div class="alert alert-info">
+                        <p>This feature allows you to mark attendance with the same status for all students in a class
+                            at once.</p>
+                    </div>
+
+                    <form method="post" class="needs-validation" novalidate>
+                        {% csrf_token %}
+
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="id_class_name" class="form-label">Class</label>
+                                    <select name="class_name" id="id_class_name" class="form-select" required>
+                                        <option value="">Select Class</option>
+                                        {% for class_name in class_choices %}
+                                        <option value="{{ class_name.0 }}">{{ class_name.1 }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <div class="invalid-feedback">Please select a class.</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="id_date" class="form-label">Date</label>
+                                    <input type="date" name="date" id="id_date" class="form-control" required
+                                        value="{{ today|date:'Y-m-d' }}">
+                                    <div class="invalid-feedback">Please select a date.</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">Status for All Students</label>
+                                    <div class="form-check form-check-inline">
+                                        {% for status_code, status_label in status_choices %}
+                                        <div class="form-check me-3">
+                                            <input class="form-check-input" type="radio" name="status"
+                                                id="status_{{ status_code }}" value="{{ status_code }}" required>
+                                            <label class="form-check-label" for="status_{{ status_code }}">
+                                                {{ status_label }}
+                                            </label>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                    <div class="invalid-feedback">Please select a status.</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="id_remarks" class="form-label">Remarks (Optional)</label>
+                                    <input type="text" name="remarks" id="id_remarks" class="form-control"
+                                        placeholder="Enter any remarks for all students">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary">Submit Bulk Attendance</button>
+                                <a href="{% url 'attendance:list' %}" class="btn btn-secondary">Cancel</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.querySelector('form');
+
+        // Form validation
+        form.addEventListener('submit', function (event) {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+
+            form.classList.add('was-validated');
+        });
+    });
+</script>
+{% endblock %}
