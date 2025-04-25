@@ -33,4 +33,7 @@ services:
         value: ${RAZORPAY_KEY_SECRET}
       - key: RAZORPAY_CURRENCY
         value: ${RAZORPAY_CURRENCY}
+      - key: Database_URL
+        value: ${DATABASE_URL}
+
     plan: free
