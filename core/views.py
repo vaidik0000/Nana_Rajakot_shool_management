@@ -318,18 +318,18 @@ def home(request):
                         # Date not in our range
                         pass
                 
-                # Process teacher attendance
-                for record in teacher_attendance:
-                    # Find index of this date in our list
-                    try:
-                        idx = date_values.index(record.date)
-                        if record.status == 'present':
-                            attendance_chart_data['teacher_present'][idx] += 1
-                        elif record.status == 'absent':
-                            attendance_chart_data['teacher_absent'][idx] += 1
-                    except ValueError:
-                        # Date not in our range
-                        pass
+                # # Process teacher attendance
+                # for record in teacher_attendance:
+                #     # Find index of this date in our list
+                #     try:
+                #         idx = date_values.index(record.date)
+                #         if record.status == 'present':
+                #             attendance_chart_data['teacher_present'][idx] += 1
+                #         elif record.status == 'absent':
+                #             attendance_chart_data['teacher_absent'][idx] += 1
+                #     except ValueError:
+                #         # Date not in our range
+                #         pass
                 
                 # Convert Python lists to JSON strings to avoid template issues
                 attendance_chart_data['labels'] = json.dumps(attendance_chart_data['labels'])

@@ -18,6 +18,7 @@ from django.db.models import Count
 import csv
 from django.http import HttpResponse
 
+
 # Student Attendance Views
 @login_required
 @new_user_restricted
@@ -1151,3 +1152,4 @@ def get_attendance_detail(request):
         
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=400)
+

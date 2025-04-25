@@ -1,0 +1,1 @@
+ pg_dump "postgresql://nana_rajkot_school_user:p4FhJAwFpYrp7gbxnZ2LQybqbjvfQyil@dpg-d04se8je5dus738l867g-a.singapore-postgres.render.com:5432/nana_rajkot_school" -f render_backup.sql

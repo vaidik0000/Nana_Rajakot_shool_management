@@ -36,9 +36,9 @@ class TeacherAttendance(models.Model):
 
     teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE, related_name='attendances')
     date = models.DateField()
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES)
-    remarks = models.TextField(blank=True)
-    recorded_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='recorded_teacher_attendances')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES)
+    remarks = models.TextField(blank=True, null=True)
+    recorded_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='teacher_attendance_records')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

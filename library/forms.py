@@ -19,31 +19,8 @@ class BookForm(forms.ModelForm):
         fields = [
             'title', 'author', 'isbn', 'category', 'publisher', 
             'publication_year', 'edition', 'description', 
-            'total_copies', 'available_copies', 'shelf_location', 
-            'status', 'cover_image'
+            'total_copies', 'shelf_location', 'status', 'cover_image'
         ]
-        widgets = {
-            'title': forms.TextInput(attrs={'class': 'form-control'}),
-            'author': forms.TextInput(attrs={'class': 'form-control'}),
-            'isbn': forms.TextInput(attrs={'class': 'form-control'}),
-            'category': forms.Select(attrs={'class': 'form-control'}),
-            'publisher': forms.TextInput(attrs={'class': 'form-control'}),
-            'publication_year': forms.NumberInput(attrs={'class': 'form-control'}),
-            'edition': forms.TextInput(attrs={'class': 'form-control'}),
-            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
-            'total_copies': forms.NumberInput(attrs={'class': 'form-control'}),
-            'available_copies': forms.NumberInput(attrs={'class': 'form-control'}),
-            'shelf_location': forms.TextInput(attrs={'class': 'form-control'}),
-            'status': forms.Select(attrs={'class': 'form-control'}),
-            'cover_image': forms.FileInput(attrs={'class': 'form-control'}),
-        }
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        # Set the queryset for the category field to show all available categories
-        self.fields['category'].queryset = BookCategory.objects.all().order_by('name')
-        # Add a placeholder to the category field
-        self.fields['category'].empty_label = "Select a category"
 
 class BookIssueForm(forms.ModelForm):
     class Meta:
@@ -95,4 +72,4 @@ class BookReturnForm(forms.ModelForm):
         fine_amount = self.cleaned_data.get('fine_amount')
         if fine_amount and fine_amount < 0:
             raise forms.ValidationError('Fine amount cannot be negative')
-        return fine_amount 
+        return fine_amount
