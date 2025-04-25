@@ -9,7 +9,7 @@ services:
       pip install --upgrade pip
       pip install -r requirements.txt
       python manage.py collectstatic --no-input
-    startCommand: gunicorn your_project_name.wsgi:application --bind 0.0.0.0:$PORT
+    startCommand: gunicorn school_management.wsgi:application --bind 0.0.0.0:$PORT
     envVars:
       - key: DJANGO_SETTINGS_MODULE
         value: school_management.settings
