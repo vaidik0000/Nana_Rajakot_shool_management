@@ -14,15 +14,13 @@ os.makedirs(LOGS_DIR, exist_ok=True)
 SECRET_KEY = config('SECRET_KEY')
 
 ENVIRONMENT = config("ENVIRONMENT", default="development")
-# DEBUG = config("DEBUG", default=(ENVIRONMENT == "development"), cast=bool)
-DEBUG = False
+# Make sure DEBUG is True for development
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
 CSRF_COOKIE_SECURE = False
 SESSION_COOKIE_SECURE = False
-
-
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -50,14 +48,31 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware', 
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'core.middleware.user_type.UserTypeMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'core.middleware.api_logger.APILoggerMiddleware',  
+    'core.middleware.api_logger.APILoggerMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+
+# Add this after your WhiteNoise configuration
+WHITENOISE_MIMETYPES = {
+    '.css': 'text/css',
+    '.js': 'application/javascript',
+    '.html': 'text/html',
+    '.png': 'image/png',
+    '.jpg': 'image/jpeg',
+    '.jpeg': 'image/jpeg',
+    '.ico': 'image/x-icon',
+    '.svg': 'image/svg+xml',
+}
+
+# Explicitly tell WhiteNoise not to handle media files
+WHITENOISE_ADD_HEADERS_FUNCTION = lambda headers, path, url: headers
 
 ROOT_URLCONF = 'school_management.urls'
 
@@ -79,7 +94,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'school_management.wsgi.application'
 
-
+# Database
 DATABASES = {
     'default': dj_database_url.config(conn_max_age=600)
 }
@@ -100,32 +115,31 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
+# Internationalization
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'Asia/Kolkata'
-
 USE_I18N = True
-
 USE_TZ = True
 
-
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
-]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# WhiteNoise configuration
+WHITENOISE_AUTOREFRESH = DEBUG
+WHITENOISE_USE_FINDERS = True
+WHITENOISE_INDEX_FILE = True
+WHITENOISE_MAX_AGE = 31536000  # 1 year
 
 # Media files
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-
+# Authentication
 USE_X_FORWARDED_HOST = True
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-
 LOGIN_URL = 'core:login'
 LOGIN_REDIRECT_URL = 'core:home'
 LOGOUT_REDIRECT_URL = 'core:login'
@@ -135,6 +149,7 @@ SESSION_COOKIE_AGE = 1209600  # 2 weeks in seconds
 SESSION_SAVE_EVERY_REQUEST = True
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 
+# Email configuration
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'  
 EMAIL_PORT = 587
@@ -144,17 +159,16 @@ EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL')  
 ADMIN_EMAIL = config('ADMIN_EMAIL')
 
+# Logging
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
-    
     'formatters': {
         'fees_formatter': {
             'format': '%(asctime)s - %(levelname)s - %(filename)s:%(lineno)d - %(funcName)s - %(message)s',
             'datefmt': '%Y-%m-%d %H:%M:%S',
         },
     },
-    
     'handlers': {
         'fees_file': {
             'class': 'logging.FileHandler',
@@ -170,7 +184,6 @@ LOGGING = {
             'level': 'INFO',
         },
     },
-    
     'loggers': {
         'fees': {
             'handlers': ['fees_file', 'fees_console'],
@@ -178,13 +191,13 @@ LOGGING = {
             'propagate': False,
         },
     },
-    
     'root': {
         'handlers': [],
         'level': 'WARNING',
     },
 }
 
+# REST Framework
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.BasicAuthentication',
@@ -195,17 +208,16 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
     ],
-    
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 3,
     'PAGE_SIZE_QUERY_PARAM': 'page_size',
     'MAX_PAGE_SIZE': 100,
-    
     'DEFAULT_FILTER_BACKENDS': [
         'rest_framework.filters.SearchFilter',
     ],
 }
 
+# JWT
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15), 
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
@@ -220,4 +232,3 @@ RAZORPAY_KEY_ID = config('RAZORPAY_KEY_ID')
 RAZORPAY_KEY_SECRET = config('RAZORPAY_KEY_SECRET')  
 RAZORPAY_CURRENCY = config('RAZORPAY_CURRENCY', default='INR')
 RAZORPAY_DEBUG = config('RAZORPAY_DEBUG', default=False, cast=bool)
-
