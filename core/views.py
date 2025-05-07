@@ -15,7 +15,7 @@ from django.conf import settings
 import random
 import string
 from datetime import datetime, timedelta
-from .forms import SignUpForm, PasswordResetRequestForm, OTPVerificationForm, SetNewPasswordForm, ProfileForm
+from .forms import SignUpForm, PasswordResetRequestForm, OTPVerificationForm, SetNewPasswordForm
 from .utils import send_otp_email, send_welcome_email
 from django.http import JsonResponse
 import json
@@ -36,15 +36,6 @@ def home(request):
     from django.db.models import Sum, Count, Avg, Q
     import datetime
     
-    context = {
-        # Other context data...
-        'profile_picture': None,
-    }
-
-    if request.user.is_authenticated:
-        if hasattr(request.user, 'profile') and request.user.profile.picture:
-            context['profile_picture'] = request.user.profile.picture.url
-
     # Check if the logged-in user is a student
     is_student = hasattr(request, 'user_type') and request.user_type == 'student'
     # Check if the logged-in user is a teacher
@@ -139,7 +130,7 @@ def home(request):
             })
         
         # Prepare the context for the student dashboard template
-        context.update({
+        context = {
             'student': student,
             'subjects': student_subjects,
             'attendance': attendance_data,
@@ -148,7 +139,7 @@ def home(request):
             'ongoing_events': ongoing_events,
             'fee_data': fee_data,
             'today': today,
-        })
+        }
         
         return render(request, 'core/student_dashboard.html', context)
     
@@ -204,7 +195,7 @@ def home(request):
                 )
         
         # Prepare the context for the teacher dashboard template
-        context.update({
+        context = {
             'teacher': teacher,
             'timetable': timetable_entries,
             'upcoming_events': upcoming_events,
@@ -213,14 +204,14 @@ def home(request):
             'subjects_taught': subjects_taught,
             'class_performance': class_performance,
             'today': today,
-        })
+        }
         
         return render(request, 'core/teacher_dashboard.html', context)
     
     # For non-student, non-teacher users, show the regular dashboard
     else:
         # Base context for all users
-        context.update({
+        context = {
             'student_count': 0,
             'teacher_count': 0,
             'subject_count': 0,
@@ -229,7 +220,7 @@ def home(request):
             'upcoming_events': [],
             'ongoing_events': [],
             'class_distribution': [],
-        })
+        }
         
         # Only fetch detailed data if user is authenticated
         if request.user.is_authenticated:
@@ -300,10 +291,15 @@ def home(request):
                 )
                 
                 # Get teacher attendance data
-                teacher_attendance = TeacherAttendance.objects.filter(
-                    date__gte=start_date,
-                    date__lte=today
-                )
+                # Get teacher attendance data
+                try:
+                    teacher_attendance = TeacherAttendance.objects.filter(
+                        date__gte=start_date,
+                        date__lte=today
+                    )
+                except Exception:
+                    # Handle the case where the table doesn't exist
+                    teacher_attendance = []
                 
                 # Process student attendance
                 for record in student_attendance:
@@ -318,18 +314,18 @@ def home(request):
                         # Date not in our range
                         pass
                 
-                # # Process teacher attendance
-                # for record in teacher_attendance:
-                #     # Find index of this date in our list
-                #     try:
-                #         idx = date_values.index(record.date)
-                #         if record.status == 'present':
-                #             attendance_chart_data['teacher_present'][idx] += 1
-                #         elif record.status == 'absent':
-                #             attendance_chart_data['teacher_absent'][idx] += 1
-                #     except ValueError:
-                #         # Date not in our range
-                #         pass
+                # Process teacher attendance
+                for record in teacher_attendance:
+                    # Find index of this date in our list
+                    try:
+                        idx = date_values.index(record.date)
+                        if record.status == 'present':
+                            attendance_chart_data['teacher_present'][idx] += 1
+                        elif record.status == 'absent':
+                            attendance_chart_data['teacher_absent'][idx] += 1
+                    except ValueError:
+                        # Date not in our range
+                        pass
                 
                 # Convert Python lists to JSON strings to avoid template issues
                 attendance_chart_data['labels'] = json.dumps(attendance_chart_data['labels'])
@@ -493,15 +489,12 @@ def login_view(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
         
-        try:
-            user = User.objects.get(username=username)
-            if user.check_password(password):
-                login(request, user)
-                return redirect('core:home')
-            else:
-                messages.error(request, 'Invalid username or password.')
-        except User.DoesNotExist:
+        if user is not None:
+            login(request, user)
+            return redirect('core:home')
+        else:
             messages.error(request, 'Invalid username or password.')
     
     return render(request, 'core/login.html')
@@ -884,16 +877,3 @@ def debug_permissions(request):
     }
     
     return render(request, 'debug_permissions.html', context)
-
-@login_required
-def update_profile(request):
-    if request.method == 'POST':
-        form = ProfileForm(request.POST, request.FILES, instance=request.user.profile)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Profile updated successfully!')
-            return redirect('core:home')
-    else:
-        form = ProfileForm(instance=request.user.profile)
-
-    return render(request, 'core/update_profile.html', {'form': form})

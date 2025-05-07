@@ -18,7 +18,6 @@ from django.db.models import Count
 import csv
 from django.http import HttpResponse
 
-
 # Student Attendance Views
 @login_required
 @new_user_restricted
@@ -451,6 +450,7 @@ def teacher_attendance_create(request):
     return render(request, 'attendance/teacher_attendance_create.html', context)
 
 @login_required
+@admin_required
 def teacher_attendance_list(request):
     """View for listing teacher attendance records - Admin only"""
     # Get filter parameters
@@ -1152,4 +1152,3 @@ def get_attendance_detail(request):
         
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=400)
-
